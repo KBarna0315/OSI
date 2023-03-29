@@ -2,9 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSI Model Simulation</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-$END$
+<h1>OSI Model Simulation</h1>
+
+<form id="simulation-form">
+    <label for="input-data">Data to send:</label>
+    <input type="text" id="input-data" required>
+    <button type="submit">Simulate</button>
+</form>
+
+<div id="results" class="hidden">
+    <h2>Simulation Results</h2>
+    <p>Original data: <span id="original-data"></span></p>
+    <p>Transmitted data: <span id="transmitted-data"></span></p>
+    <p>Received data: <span id="received-data"></span></p>
+</div>
+
+<script>
+    document.getElementById('simulation-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const inputData = document.getElementById('input-data').value;
+        const response = await fetch('index.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: inputData })
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            document.getElementById('original-data').textContent = result.originalData;
+            document.getElementById('transmitted-data').textContent = result.transmittedData;
+            document.getElementById('received-data').textContent = result.receivedData;
+            document.getElementById('results').classList.remove('hidden');
+        } else {
+            alert('An error occurred while processing the simulation.');
+        }
+    });
+</script>
 </body>
 </html>
