@@ -27,10 +27,20 @@
         e.preventDefault();
 
         const inputData = document.getElementById('input-data').value;
+
+        // Create the data packet with appropriate headers, similar to a TCP segment
+        const dataPacket = {
+            source_port: 12345, // Example source port
+            destination_port: 80, // Example destination port
+            sequence_number: 0, // Example sequence number
+            acknowledgment_number: 0, // Example acknowledgment number
+            data: inputData // The application-level request
+        };
+
         const response = await fetch('index.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: inputData })
+            body: JSON.stringify({ dataPacket: dataPacket }) // Send the data packet instead of raw inputData
         });
 
         if (response.ok) {
@@ -40,7 +50,8 @@
             document.getElementById('received-data').textContent = result.receivedData;
             document.getElementById('results').classList.remove('hidden');
         } else {
-            alert('An error occurred while processing the simulation.');
+            const errorText = await response.text();
+            alert('An error occurred while processing the simulation. ' + errorText);
         }
     });
 </script>
