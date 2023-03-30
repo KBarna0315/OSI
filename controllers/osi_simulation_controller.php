@@ -34,10 +34,10 @@ class OsiSimulationController {
         $this->transportLayer = new Transport_layer();
         $this->sessionLayer = new Session_layer();
         $this->presentationLayer = new Presentation_layer();
-        $this->applicationLayer = new Application_layer();
+        $this->applicationLayer = new Application_layer($this);
     }
 
-    public function simulateDataTransmission($data) {
+    public function simulateDataTransmission() {
         // Process data through the OSI layers (top to bottom)
 /*        $data = $this->applicationLayer->sendRequest($data);
         $data = $this->presentationLayer->formatData($data);
@@ -47,10 +47,14 @@ class OsiSimulationController {
         $data = $this->dataLinkLayer->encodeFrames($data);
         $data = $this->physicalLayer->transmitBits($data);
 
+
         return $data;*/
+        /*$data = $this->applicationLayer->sendRequest($data);
+        return $data;*/
+        return $this->dataLinkLayer->getTransmittedData();
     }
 
-    public function simulateDataReception($receivedData) {
+    public function simulateDataReception() {
         // Process received data through the OSI layers (bottom to top)
 /*        $data = $this->physicalLayer->receiveBits($receivedData);
         $data = $this->dataLinkLayer->decodeFrames($data);
@@ -61,5 +65,9 @@ class OsiSimulationController {
         $data = $this->applicationLayer->receiveRequest($data);
 
         return $data;*/
+        return $this->dataLinkLayer->getReceivedData();
+    }
+    public function sendDataPacket($dataPacket) {
+        $this->applicationLayer->sendRequest($dataPacket);
     }
 }
