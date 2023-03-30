@@ -4,14 +4,23 @@ require_once 'controllers/osi_simulation_controller.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     $input = json_decode(file_get_contents('php://input'), true);
-    $data = $input['data'];
+
+    // Get the data packet from the input instead of just the data
+    $dataPacket = $input['dataPacket'];
 
     $controller = new OsiSimulationController();
-    $transmittedData = $controller->simulateDataTransmission($data);
-    $receivedData = $controller->simulateDataReception($transmittedData);
+
+    // Call sendRequest() with the data packet instead of simulateDataTransmission()
+   // $controller->applicationLayer->sendRequest($dataPacket);
+    $controller->sendDataPacket($dataPacket); //just to maintain encapsulation
+
+    // You can modify the simulateDataTransmission() and simulateDataReception() methods
+    // inside the controller to return the transmitted and received data, respectively
+    $transmittedData = $controller->simulateDataTransmission();
+    $receivedData = $controller->simulateDataReception();
 
     $result = [
-        'originalData' => $data,
+        'originalData' => $dataPacket['data'],
         'transmittedData' => $transmittedData,
         'receivedData' => $receivedData,
     ];
