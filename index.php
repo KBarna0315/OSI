@@ -16,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // You can modify the simulateDataTransmission() and simulateDataReception() methods
     // inside the controller to return the transmitted and received data, respectively
-    $transmittedData = $controller->simulateDataTransmission();
-    $receivedData = $controller->simulateDataReception();
+    $transmittedData = $controller->simulateDataTransmission($dataPacket);
+    $receivedData = $controller->simulateDataReception($dataPacket);
 
     $result = [
         'originalData' => $dataPacket['data'],
