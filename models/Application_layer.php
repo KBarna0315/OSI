@@ -34,7 +34,7 @@ class Application_layer
             'destination_port' => 80, // Example destination port
             'sequence_number' => 0, // Example sequence number
             'acknowledgment_number' => 0, // Example acknowledgment number
-            'data' => $request // The application-level request
+            'data' => $request['data'] // The application-level request
         ];
 
         return $dataPacket;
