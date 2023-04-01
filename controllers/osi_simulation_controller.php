@@ -50,6 +50,8 @@ class OsiSimulationController {
         return $data;*/
 
         $encryptedData = $this->presentationLayer->formatData($data['data']);
+        $decryptedData = $this->presentationLayer->unformatData($encryptedData);
+        return $encryptedData;
 
 
 
