@@ -20,8 +20,23 @@ class Application_layer
         // Process the transmitted data (e.g., display a success message or handle errors)
         // ...
     }
-    public function receiveRequest() { // Process incoming application-level requests and generate
+    /**
+     * Simulate receiving an application-level request from the server.
+     * @param string $receivedData The data received from the server
+     * @return string The processed received data
+     */
+    public function receiveRequest($receivedData) {
+        // Parse the received JSON data
+        $parsedData = json_decode($receivedData, true);
 
+        // Check if the expected key exists in the parsed data
+        if (isset($parsedData['message'])) {
+            // Return the value associated with the 'message' key
+            return $parsedData['message'];
+        } else {
+            // If the key doesn't exist, return an error message
+            return 'Error: Invalid data received';
+        }
     }
     public function sendResponse($response) { //Send a response to the client based on the received request.
 
