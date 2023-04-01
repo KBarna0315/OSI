@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,21 +6,35 @@
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-<h1>OSI Model Simulation</h1>
+<header>
+    <h1>OSI Model Simulation</h1>
+</header>
 
-<form id="simulation-form">
-    <label for="input-data">Data to send:</label>
-    <input type="text" id="input-data" required>
-    <button type="submit">Simulate</button>
-</form>
+<main>
+    <form id="simulation-form">
+        <label for="input-data">Data to send:</label>
+        <input type="text" id="input-data" required>
+        <button type="submit">Simulate</button>
+    </form>
 
-<div id="results" class="hidden">
-    <h2>Simulation Results</h2>
-    <p>Original data: <span id="original-data"></span></p>
-    <p>Transmitted data: <span id="transmitted-data"></span></p>
-    <p>Received data: <span id="received-data"></span></p>
-</div>
-
+    <section id="results" class="hidden">
+        <h2>Simulation Results</h2>
+        <ul>
+            <li>
+                <span class="result-label">Original data:</span>
+                <span id="original-data"></span>
+            </li>
+            <li>
+                <span class="result-label">Transmitted data:</span>
+                <span id="transmitted-data"></span>
+            </li>
+            <li>
+                <span class="result-label">Received data:</span>
+                <span id="received-data"></span>
+            </li>
+        </ul>
+    </section>
+</main>
 <script>
     document.getElementById('simulation-form').addEventListener('submit', async (e) => {
         e.preventDefault();
