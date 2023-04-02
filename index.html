@@ -40,20 +40,10 @@
         e.preventDefault();
 
         const inputData = document.getElementById('input-data').value;
-
-        // Create the data packet with appropriate headers, similar to a TCP segment
-        const dataPacket = {
-            source_port: 12345, // Example source port
-            destination_port: 80, // Example destination port
-            sequence_number: 0, // Example sequence number
-            acknowledgment_number: 0, // Example acknowledgment number
-            data: inputData // The application-level request
-        };
-
         const response = await fetch('index.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dataPacket: dataPacket }) // Send the data packet instead of raw inputData
+            body: JSON.stringify({ dataPacket: inputData }) // Send the data packet instead of raw inputData
         });
 
         if (response.ok) {
