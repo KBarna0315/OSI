@@ -22,21 +22,71 @@ class Application_layer
         return $dataPacket;
     }
     /**
-     * Simulate receiving an application-level request from the server.
-     * @param string $receivedData The data received from the server
-     * @return string The processed received data
+     * Process an application-level request received from the server.
+     * @param array $receivedData An associative array containing the payload and header data received from the server
+     *                           Example: ['payload' => '...', 'header' => ['sequence_number' => ..., 'acknowledgment_number' => ..., ...]]
+     * @return array An associative array containing the response or error information
+     *                          Example: ['response' => '...', ...] or ['error' => '...', ...]
+     * @throws \Exception If the received data packet is invalid or if there was an error processing the request
      */
-    public function receiveRequest($receivedData) {
-        // Parse the received JSON data
-        $parsedData = json_decode($receivedData, true);
+    public function receiveRequest(array $receivedData): array {
+        try {
+            // Ensure the received data packet has the required keys
+            if (!isset($receivedData['payload'], $receivedData['header'])) {
+                throw new \Exception('Invalid data packet: Missing payload or header');
+            }
 
-        // Check if the expected key exists in the parsed data
-        if (isset($parsedData['message'])) {
-            // Return the value associated with the 'message' key
-            return $parsedData['message'];
-        } else {
-            // If the key doesn't exist, return an error message
-            return 'Error: Invalid data received';
+            // Extract the payload and header data from the received data packet
+            $payload = $receivedData['payload'];
+            $header = $receivedData['header'];
+
+            // Extract the header fields
+            $sequenceNumber = $header['sequence_number'];
+            $acknowledgmentNumber = $header['acknowledgment_number'];
+            $checksum = $header['checksum'];
+            $windowSize = $header['window_size'];
+
+            // Check if the sequence number matches the expected acknowledgment number
+            if ($sequenceNumber === $acknowledgmentNumber) {
+                // Update the acknowledgment number
+                $acknowledgmentNumber = $sequenceNumber + strlen($payload);
+
+                // Check for buffer space (simulate flow control)
+                if ($windowSize >= strlen($payload)) {
+                    // Validate the payload checksum
+                    $transportLayer = new Transport_layer();
+                    if ($transportLayer->validateChecksum($payload, $checksum)) {
+                        // Process the payload
+                        // ...
+
+                        // Return the application-level response or any relevant information
+                        return [
+                            'response' => 'Processed data successfully',
+                            // Add any other relevant information you want to return
+                        ];
+                    } else {
+                        // Handle checksum validation failure
+                        return [
+                            'error' => 'Error: Checksum validation failed',
+                        ];
+                    }
+                } else {
+                    // Handle insufficient buffer space
+                    return [
+                        'error' => 'Error: Insufficient buffer space',
+                    ];
+                }
+            } else {
+                // Handle invalid sequence number
+                return [
+                    'error' => 'Error: Invalid sequence number',
+                ];
+            }
+        } catch (\Exception $e) {
+            // Handle the error
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
+            ];
         }
     }
     public function sendResponse($response) { //Send a response to the client based on the received request.
