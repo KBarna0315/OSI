@@ -41,15 +41,36 @@ class Application_layer
     public function sendResponse($response) { //Send a response to the client based on the received request.
 
     }
+    /**
+     * Creates a simplified TCP data packet that contains a header and a payload.
+     *
+     * The header includes information such as source and destination ports,
+     * sequence number, acknowledgment number, data offset, flags, window size,
+     * checksum (set to 0 for simplicity), and urgent pointer.
+     *
+     * The payload contains the application-level request.
+     *
+     * @param string $request The application-level request data
+     * @return array A simplified TCP data packet with a header and a payload
+     */
     public function createDataPacket($request) {
-        // Create a data packet with appropriate headers, similar to a TCP segment
-        // For simplicity, we'll represent the packet as an associative array
-        $dataPacket = [
+        $sequenceNumber = 0; // Example sequence number
+
+        $tcpHeader = [
             'source_port' => 12345, // Example source port
             'destination_port' => 80, // Example destination port
-            'sequence_number' => 0, // Example sequence number
+            'sequence_number' => $sequenceNumber,
             'acknowledgment_number' => 0, // Example acknowledgment number
-            'data' => $request['data'] // The application-level request
+            'data_offset' => 5,
+            'flags' => ['ACK'],
+            'window_size' => 4096,
+            'checksum' => 0, // For simplicity, we'll just use 0 as a placeholder
+            'urgent_pointer' => 0,
+        ];
+
+        $dataPacket = [
+            'header' => $tcpHeader,
+            'payload' => $request // The application-level request
         ];
 
         return $dataPacket;
