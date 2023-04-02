@@ -16,7 +16,7 @@ class Session_layer
     /**
      * Simulate creating a session between sender and receiver.
      * @return string The unique session ID
-     * @throws Exception If there's an error while creating the session
+     * @throws \Exception If there's an error while creating the session
      */
     public function createSession($timeout = 30) { //Establish a session with the destination node.
         try {
@@ -41,8 +41,16 @@ class Session_layer
             throw new \Exception("Error creating session: " . $e->getMessage());
         }
     }
-    public function closeSession() { //Terminate the session with the destination node.
-
+    /**
+     * Close the session and clear session-related metadata.
+     */
+    public function closeSession() {
+        if (!empty($this->sessionMetadata)) {
+            $this->sessionMetadata = [];
+            echo "Session closed and session metadata cleared.\n";
+        } else {
+            echo "No active session to close.\n";
+        }
     }
     public function handleSessionErrors() { //Handle session-related errors and interruptions.
 
