@@ -17,4 +17,25 @@ require_once 'models/Application_layer.php';
 
 
 
-echo(json_encode('valami'));
+//echo(json_encode('valami'));
+//Simulation TEST 01.
+
+//Application layer
+$applicationLayer = new Application_layer();
+$text = 'proba';
+$newData = $applicationLayer->sendRequest($text);
+//echo(json_encode($newData)."\n");
+$recievedData = $applicationLayer->receiveRequest($newData);
+echo(json_encode($recievedData)."\n");
+//End of the Application layer related stuff
+
+
+//Presentation layer
+$presentationLayer = new Presentation_layer();
+$encryptedData = $presentationLayer->formatData($newData['payload']);
+echo(json_encode("Encrypted text:"));
+echo(json_encode($encryptedData)."\n");
+$decryptedData = $presentationLayer->unformatData($encryptedData);
+echo(json_encode("Decrypted text:"));
+echo(json_encode($decryptedData)."\n");
+//End of the Presentation layer related stuff
