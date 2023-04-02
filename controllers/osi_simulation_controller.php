@@ -49,9 +49,9 @@ class OsiSimulationController {
 
         return $data;*/
 
-        $encryptedData = $this->presentationLayer->formatData($data['data']);
+        $encryptedData = $this->presentationLayer->formatData($data['payload']);
         $decryptedData = $this->presentationLayer->unformatData($encryptedData);
-        $session = $this->sessionLayer->createSession(60);
+       // $session = $this->sessionLayer->createSession(60);
         return $encryptedData;
 
 
