@@ -6,13 +6,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
 
     // Get the data packet from the input instead of just the data
-    $dataPacket = $input['dataPacket'];
+    $text = $input['dataPacket'];
+
 
     $controller = new OsiSimulationController();
+    $dataPacket = $controller->sendDataPacket($text); //sendData also calls createData
 
     // Call sendRequest() with the data packet instead of simulateDataTransmission()
    // $controller->applicationLayer->sendRequest($dataPacket);
-    $controller->sendDataPacket($dataPacket); //just to maintain encapsulation
 
     // You can modify the simulateDataTransmission() and simulateDataReception() methods
     // inside the controller to return the transmitted and received data, respectively
@@ -20,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $receivedData = $controller->simulateDataReception($dataPacket);
 
     $result = [
-        'originalData' => $dataPacket['data'],
+        'originalData' => $dataPacket['payload'],
         'transmittedData' => $transmittedData,
         'receivedData' => $receivedData,
     ];

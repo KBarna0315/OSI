@@ -5,8 +5,8 @@ namespace models;
 class Application_layer
 {
     private $osiSimulationController;
-    public function __construct($osiSimulationController) {
-        $this->osiSimulationController = $osiSimulationController;
+    public function __construct() {
+
     }
     public function sendRequest($request) { //Send an application-level request to the server, such as an HTTP
         // Perform any application-specific request processing (e.g., formatting)
@@ -15,10 +15,11 @@ class Application_layer
         $dataPacket = $this->createDataPacket($request);
 
         // Pass the data packet to the OsiSimulationController for transmission through the OSI layers
-        $transmittedData = $this->osiSimulationController->simulateDataTransmission($dataPacket);
+       // $transmittedData = $this->osiSimulationController->simulateDataTransmission($dataPacket);
 
         // Process the transmitted data (e.g., display a success message or handle errors)
         // ...
+        return $dataPacket;
     }
     /**
      * Simulate receiving an application-level request from the server.

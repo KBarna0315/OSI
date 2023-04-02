@@ -34,7 +34,7 @@ class OsiSimulationController {
         $this->transportLayer = new Transport_layer();
         $this->sessionLayer = new Session_layer();
         $this->presentationLayer = new Presentation_layer();
-        $this->applicationLayer = new Application_layer($this);
+        $this->applicationLayer = new Application_layer();
     }
 
     public function simulateDataTransmission($data) {
@@ -73,6 +73,6 @@ class OsiSimulationController {
       //  return $this->dataLinkLayer->getReceivedData(); last step
     }
     public function sendDataPacket($dataPacket) {
-        $this->applicationLayer->sendRequest($dataPacket);
+      return $this->applicationLayer->sendRequest($dataPacket);
     }
 }
