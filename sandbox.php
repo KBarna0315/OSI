@@ -1,19 +1,19 @@
 <?php
-require_once 'models/Session_layer.php';
+use models\Physical_layer;
+use models\Data_link_layer;
+use models\Network_layer;
+use models\Transport_layer;
 use models\Session_layer;
-$sessionLayer = new Session_layer();
-$sessionId = $sessionLayer->createSession(60);
+use models\Presentation_layer;
+use models\Application_layer;
 
-echo "Session ID: " . $sessionId . PHP_EOL;
-
-// Print session metadata
-$reflection = new \ReflectionClass($sessionLayer);
-$metadataProperty = $reflection->getProperty('sessionMetadata');
-$metadataProperty->setAccessible(true);
-$sessionMetadata = $metadataProperty->getValue($sessionLayer);
-
-echo "Session Metadata: " . PHP_EOL;
-print_r($sessionMetadata);
+require_once 'models/Physical_layer.php';
+require_once 'models/Data_link_layer.php';
+require_once 'models/Network_layer.php';
+require_once 'models/Transport_layer.php';
+require_once 'models/Session_layer.php';
+require_once 'models/Presentation_layer.php';
+require_once 'models/Application_layer.php';
 
 
 
