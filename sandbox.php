@@ -25,7 +25,7 @@ $applicationLayer = new Application_layer();
 $text = 'proba';
 $newData = $applicationLayer->sendRequest($text);
 //echo(json_encode($newData)."\n");
-$recievedData = $applicationLayer->receiveRequest($newData);
+$recievedData = $applicationLayer->receiveRequest($newData); //Ebben a checksumot meg kell még jobban írni
 echo(json_encode($recievedData)."\n");
 //End of the Application layer related stuff
 
@@ -39,3 +39,10 @@ $decryptedData = $presentationLayer->unformatData($encryptedData);
 echo(json_encode("Decrypted text:"));
 echo(json_encode($decryptedData)."\n");
 //End of the Presentation layer related stuff
+
+//Session layer
+$sessionLayer = new Session_layer();
+$session = $sessionLayer->createSession();
+echo(json_encode("SessionID:"));
+echo(json_encode($decryptedData)."\n");
+$closeSession = $sessionLayer->closeSession();
