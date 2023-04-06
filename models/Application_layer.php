@@ -64,12 +64,13 @@ class Application_layer
                     if ($transportLayer->validateChecksum($payload, $checksum)) {
                         // Process the payload
                         // ...
+                        return $receivedData;
 
-                        // Return the application-level response or any relevant information
+          /*              // Return the application-level response or any relevant information
                         return [
                             'response' => 'Processed data successfully',
                             // Add any other relevant information you want to return
-                        ];
+                        ];*/
                     } else {
                         // Handle checksum validation failure
                         return [
