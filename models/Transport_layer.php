@@ -49,9 +49,38 @@ class Transport_layer
 
         return $dataPacket;
     }
-    public function receiveData() { //Receive data from the source node and handle retransmissions, if necessary.
+    /**
+     * Receive data from the source node and handle retransmissions, if necessary.
+     * This function does not simulate packet loss since it's already handled in the sendData() function.
+     *
+     * @param array $dataPacket The data packet received from the sender.
+     * @return array The received data packet, to be passed to the next layer for further processing.
+     */
+    public function receiveData($dataPacket)
+    {
+        $header = $dataPacket['header'];
+        // Extract the header information from the data packet
+        $sourcePort = $header['source_port'];
+        $destinationPort = $header['destination_port'];
+        $sequenceNumber = $header['sequence_number'];
+        $acknowledgmentNumber = $header['acknowledgment_number'];
 
+        // Update the acknowledgment number
+        $acknowledgmentNumber = $sequenceNumber + 1;
+
+        // Send an acknowledgment to the sender
+        $ackPacket = [
+            'source_port' => $destinationPort,
+            'destination_port' => $sourcePort,
+            'sequence_number' => $acknowledgmentNumber,
+            'acknowledgment_number' => 0,
+        ];
+        $this->sendData($ackPacket);
+
+        // Return the received data packet to the caller for further processing
+        return $dataPacket;
     }
+
     /**
      * Validate the checksum of a payload against a received checksum.
      * @param string $payload The payload for which to compute the checksum
