@@ -54,3 +54,12 @@ $dataSend = $transportLayer->sendData($recievedData);
 $dataInTransport = $transportLayer->receiveData($dataSend);
 echo(json_encode('sortörés')."\n");
 echo(json_encode($dataInTransport)."\n");
+//End of the Transport layer related stuff
+
+//Network layer
+$networkLayer = new Network_layer();
+$dataToRoute = $networkLayer->routePacket($dataInTransport);
+$routedData = $networkLayer->handleIncomingPacket($dataToRoute);
+echo(json_encode('sortörés')."\n");
+echo(json_encode($routedData)."\n");
+//End of the Network layer related stuff
