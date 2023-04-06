@@ -13,7 +13,7 @@ class Network_layer
      * @param array $dataPacket
      * @return array
      */
-    public function routePacket($dataPacket) {
+    public function routePacket($dataPacket): ?array{
         // Simulate network latency by adding a delay
         $this->simulateNetworkLatency();
 
@@ -30,7 +30,7 @@ class Network_layer
     /**
      * Simulate network latency by adding a delay to the execution
      */
-    private function simulateNetworkLatency() {
+    private function simulateNetworkLatency(): void{
         usleep(rand(10000, 100000)); // Simulate latency between 10ms and 100ms
     }
     /**
@@ -38,7 +38,7 @@ class Network_layer
      *
      * @return bool True if the packet is considered lost, False otherwise
      */
-    public function simulatePacketLoss() {
+    public function simulatePacketLoss(): bool{
         // Simulate network congestion
         $congestion = mt_rand(0, 100) / 100 < $this->congestionProbability;
 
@@ -53,8 +53,29 @@ class Network_layer
     public function forwardPacket($packet) { //Forward the packet to the next hop in the routing path.
 
     }
-    public function handleIncomingPacket($packet) { //Process received packets and deliver them to the appropriate application.
+    /**
+     * Handle an incoming packet, simulating packet loss and retransmissions as necessary.
+     *
+     * @param array $packet The packet to be handled.
+     * @return array The successfully received packet.
+     */
+    public function handleIncomingPacket($packet): array{
+        $packetLoss = $this->simulatePacketLoss();
 
+        // If packet loss occurred, simulate retransmission
+        if ($packetLoss) {
+            // Log packet loss and initiate retransmission
+            echo "Packet loss detected. Retransmitting...\n";
+
+            // Simulate a delay before retransmission
+            usleep(mt_rand(100, 500) * 1000);
+
+            // Retransmit the packet (recursive call)
+            return $this->handleIncomingPacket($packet);
+        }
+
+        // If the packet was received successfully, return the packet
+        return $packet;
     }
 
 }
