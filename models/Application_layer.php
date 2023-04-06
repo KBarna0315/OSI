@@ -112,6 +112,8 @@ class Application_layer
      */
     public function createDataPacket($request) {
         $sequenceNumber = 0; // Example sequence number
+        $transportLayer = new Transport_layer();
+        $checkSum = $transportLayer->calculateChecksum($request);
 
         $tcpHeader = [
             'source_port' => 12345, // Example source port
@@ -121,7 +123,7 @@ class Application_layer
             'data_offset' => 5,
             'flags' => ['ACK'],
             'window_size' => 4096,
-            'checksum' => 0, // For simplicity, we'll just use 0 as a placeholder
+            'checksum' => $checkSum,
             'urgent_pointer' => 0,
         ];
 
