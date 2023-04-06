@@ -13,8 +13,41 @@ class Transport_layer
     public function terminateConnection() { // Terminate the connection with the destination node.
 
     }
-    public function sendData($data, $destination){
+    /**
+     * Send data to the destination, simulating the transport layer.
+     * For this example, we'll assume that the data is already prepared
+     * as a TCP packet with a header and payload.
+     *
+     * @param array $dataPacket The data packet containing header and payload
+     * @return array The data packet after it has been transmitted
+     */
+    public function sendData($dataPacket) {
+        // Define a maximum number of retransmissions
+        $maxRetransmissions = 3;
 
+        // Simulate a random packet loss rate (0-100)
+        $packetLossRate = rand(0, 100);
+
+        // Simulate retransmissions if the packet is lost
+        for ($retransmissions = 0; $retransmissions < $maxRetransmissions; $retransmissions++) {
+            if ($packetLossRate > 10) { // 10% chance of successful transmission
+                // Packet was transmitted successfully
+                break;
+            } else {
+                // Packet was lost; increase the packet loss rate
+                $packetLossRate += 10;
+            }
+        }
+
+        // Check if the maximum number of retransmissions was exceeded
+        if ($retransmissions >= $maxRetransmissions) {
+            throw new \Exception("Data transmission failed after $maxRetransmissions retransmissions");
+        }
+
+        // Perform any other necessary transport-layer actions, such as error checking,
+        // or congestion control. For this simple example, we will just pass the data packet through unmodified.
+
+        return $dataPacket;
     }
     public function receiveData() { //Receive data from the source node and handle retransmissions, if necessary.
 
