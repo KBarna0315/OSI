@@ -26,7 +26,7 @@ class Transport_layer
         $maxRetransmissions = 3;
 
         // Simulate a random packet loss rate (0-100)
-        $packetLossRate = rand(0, 100);
+        $packetLossRate = rand(0, 100); //Maybe we can use the Network layer simulate packet loss
 
         // Simulate retransmissions if the packet is lost
         for ($retransmissions = 0; $retransmissions < $maxRetransmissions; $retransmissions++) {
