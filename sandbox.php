@@ -46,3 +46,11 @@ $session = $sessionLayer->createSession();
 echo(json_encode("SessionID:"));
 echo(json_encode($decryptedData)."\n");
 $closeSession = $sessionLayer->closeSession();
+//End of the Session layer related stuff
+
+//Transport layer
+$transportLayer = new Transport_layer();
+$dataSend = $transportLayer->sendData($recievedData);
+$dataInTransport = $transportLayer->receiveData($dataSend);
+echo(json_encode('sortörés')."\n");
+echo(json_encode($dataInTransport)."\n");
