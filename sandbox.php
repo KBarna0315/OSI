@@ -63,3 +63,13 @@ $routedData = $networkLayer->handleIncomingPacket($dataToRoute);
 echo(json_encode('sortörés')."\n");
 echo(json_encode($routedData)."\n");
 //End of the Network layer related stuff
+
+//Data Layer
+$dataLinkLayer = new Data_link_layer();
+$encodedDataFrames = $dataLinkLayer->encodeFrames($routedData);
+$decodedFramesToData = $dataLinkLayer->decodeFrames($encodedDataFrames);
+echo(json_encode('sortörés')."\n");
+echo(json_encode($encodedDataFrames)."\n");
+echo(json_encode('sortörés')."\n");
+echo(json_encode($decodedFramesToData)."\n");
+//End of the Data layer related stuff
