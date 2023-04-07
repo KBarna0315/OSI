@@ -22,13 +22,38 @@ class Data_link_layer
      */
     public function encodeFrames(array $packet): array
     {
-        // Convert the text payload to a binary string
-        $binaryPayload = $this->textToBinary($packet['payload']);
+        $header = $packet['header'];
+        $payloadText = $packet['payload'];
 
-        // Calculate the parity bit for the binary payload
-        $packet['parity_bit'] = $this->calculateParityBit($binaryPayload);
+        // Convert the payload text into a binary string
+        $payloadBinary = $this->textToBinary($payloadText);
 
-        return $packet;
+        // Update the payload with the binary string
+        $dataPacket['payload'] = $payloadBinary;
+
+        // Split the binary string into frames
+        $frames = [];
+        $frameSize = 8; // Example frame size in bits
+
+        for ($i = 0, $sequenceNumber = 0; $i < strlen($payloadBinary); $i += $frameSize, $sequenceNumber++) {
+            $framePayload = substr($payloadBinary, $i, $frameSize);
+            $parityBit = $this->calculateParityBit($framePayload);
+
+            $frameHeader = [
+                'sequence_number' => $sequenceNumber,
+                'network_header' => $header, // include the original network header information
+            ];
+
+            $frame = [
+                'header' => $frameHeader,
+                'payload' => $framePayload,
+                'parity_bit' => $parityBit,
+            ];
+
+            $frames[] = $frame;
+        }
+
+        return $frames;
     }
     public function decodeFrames($frames) { //Extract data from received frames and validate the source and destination MAC addresses.
 
