@@ -15,10 +15,11 @@ class Data_link_layer
     public function getReceivedData() {
         return $this->receivedData;
     }
+
     /**
-     * Encode the given data packet into frames for transmission over the network.
-     * @param array $packet The data packet to be encoded.
-     * @return array The encoded frames.
+     * Encode the data packet into frames that can be transmitted through the lower layer
+     * @param array $packet The data packet to be encoded
+     * @return array The encoded frames
      */
     public function encodeFrames(array $packet): array
     {
