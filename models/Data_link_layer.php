@@ -56,8 +56,37 @@ class Data_link_layer
 
         return $frames;
     }
-    public function decodeFrames($frames) { //Extract data from received frames and validate the source and destination MAC addresses.
+    /**
+     * Decodes the frames back into a packet
+     * @param array $frames
+     * @return array
+     */
+    public function decodeFrames(array $frames): array
+    {
+        $decodedPayload = '';
+        $header = [];
 
+        // Process each frame
+        foreach ($frames as $frame) {
+            $frameHeader = $frame['header'];
+            $payload = $frame['payload'];
+
+            // Extract the network header from the first frame
+            if ($frameHeader['sequence_number'] === 0) {
+                $header = $frameHeader['network_header'];
+            }
+
+            // Convert binary payload back to the original text
+            $decodedPayload .= $this->binaryToString($payload);
+        }
+
+        // Reassemble the packet with the decoded payload and the extracted header
+        $packet = [
+            'header' => $header,
+            'payload' => $decodedPayload,
+        ];
+
+        return $packet;
     }
     /**
      * Calculate a simple parity bit for the given data.
@@ -84,6 +113,31 @@ class Data_link_layer
         }
         return $binary;
     }
+    /**
+     * Convert a binary string back to text
+     * @param string $binary
+     * @return string
+     */
+    public function binaryToString(string $binary): string
+    {
+        $text = '';
+        $binaryLength = strlen($binary);
+
+        // Iterate through the binary string in chunks of 8 bits
+        for ($i = 0; $i < $binaryLength; $i += 8) {
+            // Extract 8 bits from the binary string
+            $byte = substr($binary, $i, 8);
+
+            // Convert the binary byte to its ASCII character representation
+            $character = chr(bindec($byte));
+
+            // Append the character to the text
+            $text .= $character;
+        }
+
+        return $text;
+    }
+
 
 
 }
