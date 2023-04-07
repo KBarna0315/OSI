@@ -73,3 +73,13 @@ echo(json_encode($encodedDataFrames)."\n");
 echo(json_encode('sortörés')."\n");
 echo(json_encode($decodedFramesToData)."\n");
 //End of the Data layer related stuff
+
+//Physical Layer
+$physicalLayer = new Physical_layer();
+$transmission = $physicalLayer->transmitBits($encodedDataFrames);
+echo(json_encode('sortörés')."\n");
+echo(json_encode($transmission)."\n");
+$receiveTransmission = $physicalLayer->receiveBits($transmission);
+echo(json_encode('sortörés')."\n");
+echo(json_encode($receiveTransmission)."\n");
+//End of the Physical layer related stuff
