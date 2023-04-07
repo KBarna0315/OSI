@@ -30,7 +30,7 @@ class Data_link_layer
         $payloadBinary = $this->textToBinary($payloadText);
 
         // Update the payload with the binary string
-        $dataPacket['payload'] = $payloadBinary;
+        $packet['payload'] = $payloadBinary;
 
         // Split the binary string into frames
         $frames = [];
