@@ -68,7 +68,7 @@ class Data_link_layer
 
         // Process each frame
         foreach ($frames as $frame) {
-            $frameHeader = $frame['header'];
+            $frameHeader = $frame['frame_header'];
             $payload = $frame['payload'];
 
             // Extract the network header from the first frame
