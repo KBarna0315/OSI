@@ -10,18 +10,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $controller = new OsiSimulationController();
-    $dataPacket = $controller->sendDataPacket($text); //sendData also calls createData
+   // $dataPacket = $controller->sendDataPacket($text); //sendData also calls createData
 
     // Call sendRequest() with the data packet instead of simulateDataTransmission()
    // $controller->applicationLayer->sendRequest($dataPacket);
 
     // You can modify the simulateDataTransmission() and simulateDataReception() methods
     // inside the controller to return the transmitted and received data, respectively
-    $transmittedData = $controller->simulateDataTransmission($dataPacket);
-    $receivedData = $controller->simulateDataReception($dataPacket);
+    $transmittedData = $controller->simulateDataTransmission($text);
+    $receivedData = $controller->simulateDataReception($transmittedData);
 
     $result = [
-        'originalData' => $dataPacket['payload'],
+        'originalData' => $text,
         'transmittedData' => $transmittedData,
         'receivedData' => $receivedData,
     ];
