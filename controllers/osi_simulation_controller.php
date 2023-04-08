@@ -39,38 +39,27 @@ class OsiSimulationController {
 
     public function simulateDataTransmission($data) {
         // Process data through the OSI layers (top to bottom)
-/*        $data = $this->applicationLayer->sendRequest($data);
-        $data = $this->presentationLayer->formatData($data);
-        $data = $this->sessionLayer->createSession($data);
-        $data = $this->transportLayer->sendData($data);
+        $data = $this->applicationLayer->sendRequest($data);
+        $data['payload'] = $this->presentationLayer->formatData($data['payload']);
+        $this->sessionLayer->createSession();
+        $data =$this->transportLayer->sendData($data);
         $data = $this->networkLayer->routePacket($data);
-        $data = $this->dataLinkLayer->encodeFrames($data);
-        $data = $this->physicalLayer->transmitBits($data);
-
-        return $data;*/
-
-        $encryptedData = $this->presentationLayer->formatData($data['payload']);
-        $decryptedData = $this->presentationLayer->unformatData($encryptedData);
-       // $session = $this->sessionLayer->createSession(60);
-        return $encryptedData;
+        $frames = $this->dataLinkLayer->encodeFrames($data);
+        $data = $this->physicalLayer->transmitBits($frames);
+        return $data;
 
 
-
-        // return $this->dataLinkLayer->getTransmittedData(); last step
     }
 
     public function simulateDataReception($data) {
         // Process received data through the OSI layers (bottom to top)
-/*        $data = $this->physicalLayer->receiveBits($receivedData);
-        $data = $this->dataLinkLayer->decodeFrames($data);
-        $data = $this->networkLayer->handleIncomingPacket($data);
+        $data = $this->physicalLayer->receiveBits($data);
+        $data = $this->dataLinkLayer->decodeFrames($data); //TODO: binary to string except 8 bit long chunks but we have 4 bit long chunks because of the Hamming 7.4 decoding
+      /*  $data = $this->networkLayer->handleIncomingPacket($data);
         $data = $this->transportLayer->receiveData($data);
-        $data = $this->sessionLayer->closeSession($data);
-        $data = $this->presentationLayer->unformatData($data);
-        $data = $this->applicationLayer->receiveRequest($data);
-
-        return $data;*/
-      //  return $this->dataLinkLayer->getReceivedData(); last step
+        $this->sessionLayer->closeSession();
+        $data = $this->presentationLayer->unformatData($data['payload']);
+        $data = $this->applicationLayer->receiveRequest($data);*/
     }
     public function sendDataPacket($dataPacket) {
       return $this->applicationLayer->sendRequest($dataPacket);
