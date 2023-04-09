@@ -18,6 +18,8 @@
         <button type="submit">Simulate</button>
     </form>
 
+    <div id="loader" class="loader hidden"></div> <!-- Add the loader element here -->
+
     <section id="results" class="hidden">
         <h2>Simulation Results</h2>
         <div class="result-label">Original data:</div>
@@ -45,12 +47,18 @@
     document.getElementById('simulation-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        // Show the loader
+        document.getElementById('loader').classList.remove('hidden');
+
         const inputData = document.getElementById('input-data').value;
         const response = await fetch('index.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ dataPacket: inputData }) // Send the data packet instead of raw inputData
         });
+
+        // Hide the loader
+        document.getElementById('loader').classList.add('hidden');
 
         if (response.ok) {
             const result = await response.json();
