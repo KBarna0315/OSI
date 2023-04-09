@@ -53,13 +53,14 @@ class OsiSimulationController {
 
     public function simulateDataReception($data) {
         // Process received data through the OSI layers (bottom to top)
-        $data = $this->physicalLayer->receiveBits($data);
-        $data = $this->dataLinkLayer->decodeFrames($data); //TODO: binary to string except 8 bit long chunks but we have 4 bit long chunks because of the Hamming 7.4 decoding
-      /*  $data = $this->networkLayer->handleIncomingPacket($data);
+        $receivedFrames = $this->physicalLayer->receiveBits($data);
+        $data = $this->dataLinkLayer->decodeFrames($receivedFrames);
+        $data = $this->networkLayer->handleIncomingPacket($data);
         $data = $this->transportLayer->receiveData($data);
         $this->sessionLayer->closeSession();
-        $data = $this->presentationLayer->unformatData($data['payload']);
-        $data = $this->applicationLayer->receiveRequest($data);*/
+        $data['payload'] = $this->presentationLayer->unformatData($data['payload']);
+        $data = $this->applicationLayer->receiveRequest($data);
+        return $data;
     }
     public function sendDataPacket($dataPacket) {
       return $this->applicationLayer->sendRequest($dataPacket);
