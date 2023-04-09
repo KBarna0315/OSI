@@ -44,21 +44,34 @@
     </section>
 </main>
 <script>
-    document.getElementById('simulation-form').addEventListener('submit', async (e) => {
+    const simulationForm = document.getElementById('simulation-form');
+    const inputDataField = document.getElementById('input-data');
+    const submitButton = simulationForm.querySelector('button[type="submit"]');
+    const loader = document.getElementById('loader');
+
+    simulationForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Show the loader
-        document.getElementById('loader').classList.remove('hidden');
+        submitButton.disabled = true;
+        // Disable input and submit button, and show the loader
+        document.getElementById('input-data').disabled = true;
+        submitButton.disabled = true;
+        submitButton.classList.add('submit-loading');
+        loader.classList.remove('hidden');
 
-        const inputData = document.getElementById('input-data').value;
+        const inputData = inputDataField.value;
         const response = await fetch('index.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ dataPacket: inputData }) // Send the data packet instead of raw inputData
         });
 
-        // Hide the loader
-        document.getElementById('loader').classList.add('hidden');
+        // Enable input and submit button, and hide the loader
+        document.getElementById('input-data').disabled = false;
+        submitButton.disabled = false;
+        submitButton.classList.remove('submit-loading');
+        loader.classList.add('hidden');
+
 
         if (response.ok) {
             const result = await response.json();
