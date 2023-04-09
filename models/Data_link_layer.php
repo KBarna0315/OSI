@@ -118,25 +118,25 @@ class Data_link_layer
      * @param string $binary
      * @return string
      */
-    public function binaryToString(string $binary): string
+    protected function binaryToString(string $binary): string
     {
         $text = '';
         $binaryLength = strlen($binary);
 
-        // Iterate through the binary string in chunks of 8 bits
+        // Make sure the binary length is a multiple of 4
+        if ($binaryLength % 4 !== 0) {
+            throw new \InvalidArgumentException('Invalid binary length, it must be a multiple of 4');
+        }
+
         for ($i = 0; $i < $binaryLength; $i += 8) {
-            // Extract 8 bits from the binary string
-            $byte = substr($binary, $i, 8);
-
-            // Convert the binary byte to its ASCII character representation
-            $character = chr(bindec($byte));
-
-            // Append the character to the text
-            $text .= $character;
+            // Combine two 4-bit chunks to form an 8-bit chunk
+            $byte = $binary[$i] . $binary[$i + 1] . $binary[$i + 2] . $binary[$i + 3] . $binary[$i + 4] . $binary[$i + 5] . $binary[$i + 6] . $binary[$i + 7];
+            $text .= chr(bindec($byte));
         }
 
         return $text;
     }
+
 
 
 
