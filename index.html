@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -19,20 +20,25 @@
 
     <section id="results" class="hidden">
         <h2>Simulation Results</h2>
-        <ul>
-            <li>
-                <span class="result-label">Original data:</span>
-                <span id="original-data"></span>
-            </li>
-            <li>
-                <span class="result-label">Transmitted data:</span>
-                <span id="transmitted-data"></span>
-            </li>
-            <li>
-                <span class="result-label">Received data:</span>
-                <span id="received-data"></span>
-            </li>
-        </ul>
+        <div class="result-label">Original data:</div>
+        <div id="original-data"></div>
+
+        <button id="toggle-transmitted-data" class="hidden">Toggle Transmitted Data</button>
+        <div class="result-label">Transmitted data:</div>
+        <table id="transmitted-data" class="hidden">
+            <thead>
+            <tr>
+                <th>Frame</th>
+                <th>Header</th>
+                <th>Payload</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <div class="result-label">Received data:</div>
+        <div id="received-data"></div>
     </section>
 </main>
 <script>
@@ -49,13 +55,33 @@
         if (response.ok) {
             const result = await response.json();
             document.getElementById('original-data').textContent = result.originalData;
-            document.getElementById('transmitted-data').textContent = result.transmittedData;
+
+            // Update table with transmitted frames
+            const tableBody = document.getElementById('transmitted-data').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+            result.transmittedData.forEach((frame, index) => {
+                const row = tableBody.insertRow(-1);
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+
+                cell1.textContent = index + 1;
+                cell2.textContent = JSON.stringify(frame.frame_header);
+                cell3.textContent = frame.payload;
+            });
+
             document.getElementById('received-data').textContent = result.receivedData;
             document.getElementById('results').classList.remove('hidden');
+            document.getElementById('toggle-transmitted-data').classList.remove('hidden');
         } else {
             const errorText = await response.text();
             alert('An error occurred while processing the simulation. ' + errorText);
         }
+    });
+
+    document.getElementById('toggle-transmitted-data').addEventListener('click', () => {
+        const table = document.getElementById('transmitted-data');
+        table.classList.toggle('hidden');
     });
 </script>
 </body>
