@@ -186,5 +186,14 @@ tr:hover {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+/* Add this to your styles.css */
+button.submit-loading {
+    background-color: #ff0000;
+}
+
+button.submit-loading:hover {
+    background-color: #cc0000;
+}
+
 
 
