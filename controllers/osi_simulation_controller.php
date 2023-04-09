@@ -57,7 +57,7 @@ class OsiSimulationController {
         $data = $this->dataLinkLayer->decodeFrames($receivedFrames);
         $data = $this->networkLayer->handleIncomingPacket($data);
         $data = $this->transportLayer->receiveData($data);
-        $this->sessionLayer->closeSession();
+    //    $this->sessionLayer->closeSession();
         $data['payload'] = $this->presentationLayer->unformatData($data['payload']);
         $data = $this->applicationLayer->receiveRequest($data);
         return $data;
