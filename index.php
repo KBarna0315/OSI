@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = [
         'originalData' => $text,
         'transmittedData' => $transmittedData,
-        'receivedData' => $receivedData,
+        'receivedData' => $receivedData['payload'],
     ];
 
     echo json_encode($result);
