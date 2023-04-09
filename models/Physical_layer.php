@@ -47,41 +47,32 @@ class Physical_layer
      */
     public function receiveBits(array $frames): array
     {
-        // Introduce a slight delay to simulate the reception time
-        usleep(100000); // 100 ms delay
+        $receivedFrames = [];
 
-        // Simulate error correction mechanism
-        $correctedFrames = [];
         foreach ($frames as $frame) {
-            $frameHeader = $frame['frame_header'];
-            $payload = $frame['payload'];
+            // Introduce a delay to simulate the transmission time
+            usleep(10000); // 10 ms delay
 
-            //Preprocess for Hamming   Pad the payload with zeros to make its length a multiple of 7
-            while (strlen($payload) % 7 !== 0) {
-                $payload .= "0";
+            // Simulate a small probability of bit errors during transmission
+            $bitErrorRate = 0.0001; // 0.01% chance of bit errors
+
+            if (mt_rand(1, 1000000) <= 1000000 * $bitErrorRate) {
+                // If a bit error occurs, randomly flip a bit in the payload
+                $randomBit = mt_rand(0, strlen($frame['payload']) * 8 - 1);
+                $bytePos = (int)($randomBit / 8);
+                $bitPos = $randomBit % 8;
+                $frame['payload'][$bytePos] = chr(ord($frame['payload'][$bytePos]) ^ (1 << $bitPos));
             }
 
-            // Split the payload into 7-bit chunks (Hamming(7, 4) code)
-            $chunks = str_split($payload, 7);
-
-            // Initialize an empty corrected payload
-            $correctedPayload = '';
-
-            foreach ($chunks as $chunk) {
-                // Decode the chunk using Hamming(7, 4) code
-                $correctedChunk = $this->decodeHamming74($chunk);
-                $correctedPayload .= $correctedChunk;
-            }
-            $correctedPayload = rtrim($correctedPayload, "0");
-
-            $correctedFrames[] = [
-                'frame_header' => $frameHeader,
-                'payload' => $correctedPayload,
+            $receivedFrames[] = [
+                'frame_header' => $frame['frame_header'],
+                'payload' => $frame['payload'],
             ];
         }
 
-        return $correctedFrames;
+        return $receivedFrames;
     }
+
     /**
      * Decode a 7-bit chunk using Hamming(7, 4) code
      *
