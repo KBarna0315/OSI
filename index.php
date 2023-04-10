@@ -1,5 +1,7 @@
 <?php
 require_once 'controllers/osi_simulation_controller.php';
+require_once 'utils/log.php';
+use utils\Log;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
@@ -24,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'originalData' => $text,
         'transmittedData' => $transmittedData,
         'receivedData' => $receivedData['payload'],
+        'logMessages' => Log::getMessages(),
     ];
 
     echo json_encode($result);
