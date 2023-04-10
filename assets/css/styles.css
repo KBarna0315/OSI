@@ -193,6 +193,17 @@ button.submit-loading {
 button.submit-loading:hover {
     background-color: #cc0000;
 }
+textarea#log-messages {
+    width: 100%;
+    max-width: 500px;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f7f7f7;
+    font-family: monospace;
+    resize: vertical;
+}
+
 
 
 
