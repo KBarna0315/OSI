@@ -1,6 +1,8 @@
 <?php
 
 namespace models;
+use utils\Log;
+require_once 'utils/Log.php';
 
 class Network_layer
 {
@@ -14,18 +16,25 @@ class Network_layer
      * @return array
      */
     public function routePacket($dataPacket): ?array{
-        // Simulate network latency by adding a delay
-        $this->simulateNetworkLatency();
+        try {
+            // Simulate network latency by adding a delay
+            $this->simulateNetworkLatency();
 
-        // Simulate random packet loss
-        if ($this->simulatePacketLoss()) {
-            // In a real-world scenario, the router would detect the packet loss and initiate a retransmission.
-            // However, we won't be able to demonstrate retransmission in this simulation.
+            // Simulate random packet loss
+            if ($this->simulatePacketLoss()) {
+                // In a real-world scenario, the router would detect the packet loss and initiate a retransmission.
+                // However, we won't be able to demonstrate retransmission in this simulation.
+                return null;
+            }
+
+            // Return the data packet unchanged, as we are not modifying it during routing
+            Log::addMessage('info','Routing the data packet through the network.');
+            return $dataPacket;
+        } catch (\Exception $e) {
+            // Log the error
+            Log::addMessage('warning', 'An error occurred while routing packet: ' . $e->getMessage());
             return null;
         }
-
-        // Return the data packet unchanged, as we are not modifying it during routing
-        return $dataPacket;
     }
     /**
      * Simulate network latency by adding a delay to the execution
