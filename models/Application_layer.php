@@ -135,7 +135,7 @@ class Application_layer
             'header' => $tcpHeader,
             'payload' => $request // The application-level request
         ];
-
+        Log::addMessage('info', 'TCP like data packet created.');
         return $dataPacket;
     }
 
