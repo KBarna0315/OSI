@@ -42,8 +42,11 @@
         <div class="result-label">Received data:</div>
         <div id="received-data"></div>
         <!-- Add this inside the "results" section -->
-        <div class="result-label">Log:</div>
+        <div class="result-label">
+            <label for="log-messages">Log Messages:</label>
+        </div>
         <textarea id="log-messages" readonly rows="10"></textarea>
+
 
     </section>
 
@@ -98,6 +101,20 @@
             });
 
             document.getElementById('received-data').textContent = result.receivedData;
+
+            // Populate the log messages textarea
+            const logMessagesTextarea = document.getElementById('log-messages');
+            const formattedLogMessages = [];
+
+            for (const type in result.logMessages) {
+                for (const key in result.logMessages[type]) {
+                    formattedLogMessages.push(`${type}: ${result.logMessages[type][key]}`);
+                }
+            }
+
+            logMessagesTextarea.value = formattedLogMessages.join('\n');
+            //End of log messages
+
             document.getElementById('results').classList.remove('hidden');
             document.getElementById('toggle-transmitted-data').classList.remove('hidden');
         } else {

@@ -203,6 +203,12 @@ textarea#log-messages {
     font-family: monospace;
     resize: vertical;
 }
+.result-label label {
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
 
 
 

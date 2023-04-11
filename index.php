@@ -21,12 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // inside the controller to return the transmitted and received data, respectively
     $transmittedData = $controller->simulateDataTransmission($text);
     $receivedData = $controller->simulateDataReception($transmittedData);
+    $allMessages = Log::getMessages();
 
     $result = [
         'originalData' => $text,
         'transmittedData' => $transmittedData,
         'receivedData' => $receivedData['payload'],
-        'logMessages' => Log::getMessages(),
+        'logMessages' => $allMessages,
     ];
 
     echo json_encode($result);
