@@ -64,35 +64,36 @@ class Application_layer
                     // Validate the payload checksum
                     $transportLayer = new Transport_layer();
                     if ($transportLayer->validateChecksum($payload, $checksum)) {
-                        // Process the payload
-                        // ...
+                        Log::addMessage('info', 'Received and processed a valid data packet.');
                         return $receivedData;
-
-          /*              // Return the application-level response or any relevant information
-                        return [
-                            'response' => 'Processed data successfully',
-                            // Add any other relevant information you want to return
-                        ];*/
                     } else {
                         // Handle checksum validation failure
+                        Log::addMessage('error', 'Checksum validation failed for received data packet.');
+
                         return [
                             'error' => 'Error: Checksum validation failed',
                         ];
                     }
                 } else {
                     // Handle insufficient buffer space
+                    Log::addMessage('warning', 'Received data packet exceeds buffer space.');
+
                     return [
                         'error' => 'Error: Insufficient buffer space',
                     ];
                 }
             } else {
                 // Handle invalid sequence number
+                Log::addMessage('warning', 'Received data packet has an invalid sequence number.');
+
                 return [
                     'error' => 'Error: Invalid sequence number',
                 ];
             }
         } catch (\Exception $e) {
             // Handle the error
+            Log::addMessage('error', 'An error occurred while receiving data packet: ' . $e->getMessage());
+
             return [
                 'error' => 'Error: ' . $e->getMessage(),
             ];
