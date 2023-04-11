@@ -1,6 +1,8 @@
 <?php
 
 namespace models;
+use utils\Log;
+require_once 'utils/Log.php';
 
 class Data_link_layer
 {
@@ -23,39 +25,55 @@ class Data_link_layer
      */
     public function encodeFrames(array $packet): array
     {
-        $header = $packet['header'];
-        $payloadText = $packet['payload'];
+        try {
+            $header = $packet['header'];
+            $payloadText = $packet['payload'];
 
-        // Convert the payload text into a binary string
-        $payloadBinary = $this->textToBinary($payloadText);
+            // Ensure the payload is not empty
+            if (empty($payloadText)) {
+                throw new \Exception('Payload is empty');
+            }
 
-        // Update the payload with the binary string
-        $packet['payload'] = $payloadBinary;
+            // Convert the payload text into a binary string
+            $payloadBinary = $this->textToBinary($payloadText);
 
-        // Split the binary string into frames
-        $frames = [];
-        $frameSize = 8; // Example frame size in bits
+            // Update the payload with the binary string
+            $packet['payload'] = $payloadBinary;
 
-        for ($i = 0, $sequenceNumber = 0; $i < strlen($payloadBinary); $i += $frameSize, $sequenceNumber++) {
-            $framePayload = substr($payloadBinary, $i, $frameSize);
-            $parityBit = $this->calculateParityBit($framePayload);
+            // Split the binary string into frames
+            $frames = [];
+            $frameSize = 8; // Example frame size in bits
 
-            $frameHeader = [
-                'sequence_number' => $sequenceNumber,
-                'network_header' => $header, // include the original network header information
+            for ($i = 0, $sequenceNumber = 0; $i < strlen($payloadBinary); $i += $frameSize, $sequenceNumber++) {
+                $framePayload = substr($payloadBinary, $i, $frameSize);
+                $parityBit = $this->calculateParityBit($framePayload);
+
+                $frameHeader = [
+                    'sequence_number' => $sequenceNumber,
+                    'network_header' => $header, // include the original network header information
+                ];
+
+                $frame = [
+                    'header' => $frameHeader,
+                    'payload' => $framePayload,
+                    'parity_bit' => $parityBit,
+                ];
+
+                $frames[] = $frame;
+            }
+
+            Log::addMessage('info', 'Encoding frames for packet');
+            return $frames;
+        } catch (\Exception $e) {
+            // Log the error
+            Log::addMessage('error', 'An error occurred while encoding frames: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
             ];
-
-            $frame = [
-                'header' => $frameHeader,
-                'payload' => $framePayload,
-                'parity_bit' => $parityBit,
-            ];
-
-            $frames[] = $frame;
         }
-
-        return $frames;
     }
+
     /**
      * Decodes the frames back into a packet
      * @param array $frames
