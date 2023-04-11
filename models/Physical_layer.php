@@ -1,6 +1,8 @@
 <?php
 
 namespace models;
+use utils\Log;
+require_once 'utils/Log.php';
 
 class Physical_layer
 {
@@ -12,32 +14,55 @@ class Physical_layer
      */
     public function transmitBits(array $frames): array
     {
-        // Introduce a slight delay to simulate the transmission time
-        usleep(100000); // 100 ms delay
+        try {
+            // Introduce a slight delay to simulate the transmission time
+            usleep(100000); // 100 ms delay
 
-        // Simulate a small probability of bit errors during transmission
-        $bitErrorRate = 0.0001; // 0.01% chance of bit errors
-        $receivedFrames = [];
+            // Simulate a small probability of bit errors during transmission
+            $bitErrorRate = 0.0001; // 0.01% chance of bit errors
+            $receivedFrames = [];
 
-        foreach ($frames as $frame) {
-            $payload = $frame['payload'];
-            $frameHeader = $frame['header'];
+            foreach ($frames as $frame) {
+                $payload = $frame['payload'];
+                $frameHeader = $frame['header'];
 
-            if (mt_rand(1, 1000000) <= 1000000 * $bitErrorRate) {
-                // If a bit error occurs, randomly flip a bit in the payload
-                $randomBit = mt_rand(0, strlen($payload) * 8 - 1);
-                $bytePos = (int)($randomBit / 8);
-                $bitPos = $randomBit % 8;
-                $payload[$bytePos] = chr(ord($payload[$bytePos]) ^ (1 << $bitPos));
+                if (mt_rand(1, 1000000) <= 1000000 * $bitErrorRate) {
+                    // If a bit error occurs, randomly flip a bit in the payload
+                    $randomBit = mt_rand(0, strlen($payload) * 8 - 1);
+                    $bytePos = (int)($randomBit / 8);
+                    $bitPos = $randomBit % 8;
+
+                    // Check if the byte position is within the payload range
+                    if ($bytePos < strlen($payload)) {
+                        $payload[$bytePos] = chr(ord($payload[$bytePos]) ^ (1 << $bitPos));
+                    } else {
+                        throw new \TypeError('Payload index out of range');
+                    }
+                }
+
+                $receivedFrames[] = [
+                    'frame_header' => $frameHeader,
+                    'payload' => $payload,
+                ];
             }
 
-            $receivedFrames[] = [
-                'frame_header' => $frameHeader,
-                'payload' => $payload,
+            Log::addMessage('info', 'Transmitted bits successfully');
+            return $receivedFrames;
+        } catch (\TypeError $e) {
+            // Log the error
+            Log::addMessage('error', 'A type error occurred while transmitting bits: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
+            ];
+        } catch (\Exception $e) {
+            // Log the error
+            Log::addMessage('error', 'An error occurred while transmitting bits: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
             ];
         }
-
-        return $receivedFrames;
     }
     /**
      * Receive the transmitted frames and handle necessary error corrections
