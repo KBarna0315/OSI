@@ -1,6 +1,8 @@
 <?php
 
 namespace models;
+use utils\Log;
+require_once 'utils/Log.php';
 
 class Application_layer
 {
@@ -14,19 +16,19 @@ class Application_layer
      * @return array An associative array representing the data packet that was sent to the server, including headers
      *               Example: ['payload' => '...', 'header' => ['sequence_number' => ..., 'acknowledgment_number' => ..., ...]]
      */
-    public function sendRequest($request) { //Send an application-level request to the server, such as an HTTP
-        // Perform any application-specific request processing (e.g., formatting)
-
-        // Convert the request into a data packet with appropriate headers, similar to a TCP segment
-        $dataPacket = $this->createDataPacket($request);
-
-        // Pass the data packet to the OsiSimulationController for transmission through the OSI layers
-       // $transmittedData = $this->osiSimulationController->simulateDataTransmission($dataPacket);
-
-        // Process the transmitted data (e.g., display a success message or handle errors)
-        // ...
-        return $dataPacket;
+    public function sendRequest($request) {
+        try {
+            // Convert the request into a data packet with appropriate headers, similar to a TCP segment
+            $dataPacket = $this->createDataPacket($request);
+            Log::addMessage('info', 'Sending an application-level request to the server.');
+            return $dataPacket;
+        } catch (\Exception $e) {
+            // Log the error and return null or throw an exception
+            Log::addMessage('error', 'An error occurred while sending the request: ' . $e->getMessage());
+            return null;
+        }
     }
+
     /**
      * Process an application-level request received from the server.
      * @param array $receivedData An associative array containing the payload and header data received from the server
