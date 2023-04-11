@@ -81,31 +81,47 @@ class Data_link_layer
      */
     public function decodeFrames(array $frames): array
     {
-        $decodedPayload = '';
-        $header = [];
+        try {
+            $decodedPayload = '';
+            $header = [];
 
-        // Process each frame
-        foreach ($frames as $frame) {
-            $frameHeader = $frame['frame_header'];
-            $payload = $frame['payload'];
+            // Process each frame
+            foreach ($frames as $frame) {
+                $frameHeader = $frame['header'];
+                $payload = $frame['payload'];
 
-            // Extract the network header from the first frame
-            if ($frameHeader['sequence_number'] === 0) {
-                $header = $frameHeader['network_header'];
+                // Extract the network header from the first frame
+                if ($frameHeader['sequence_number'] === 0) {
+                    $header = $frameHeader['network_header'];
+                }
+
+                // Convert binary payload back to the original text
+                $decodedPayload .= $this->binaryToString($payload);
             }
 
-            // Convert binary payload back to the original text
-            $decodedPayload .= $this->binaryToString($payload);
+            // Ensure the header is not empty
+            if (empty($header)) {
+                throw new \Exception('Header is missing');
+            }
+
+            // Reassemble the packet with the decoded payload and the extracted header
+            $packet = [
+                'header' => $header,
+                'payload' => $decodedPayload,
+            ];
+
+            Log::addMessage('info', 'Decoded frames into packet');
+            return $packet;
+        } catch (\Exception $e) {
+            // Log the error
+            Log::addMessage('error', 'An error occurred while decoding frames: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
+            ];
         }
-
-        // Reassemble the packet with the decoded payload and the extracted header
-        $packet = [
-            'header' => $header,
-            'payload' => $decodedPayload,
-        ];
-
-        return $packet;
     }
+
     /**
      * Calculate a simple parity bit for the given data.
      * @param string $binaryData is the binary data to calculate the parity bit for.
