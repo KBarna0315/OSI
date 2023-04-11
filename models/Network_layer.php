@@ -69,22 +69,32 @@ class Network_layer
      * @return array The successfully received packet.
      */
     public function handleIncomingPacket($packet): array{
-        $packetLoss = $this->simulatePacketLoss();
+        try {
+            $packetLoss = $this->simulatePacketLoss();
 
-        // If packet loss occurred, simulate retransmission
-        if ($packetLoss) {
-            // Log packet loss and initiate retransmission
-            echo "Packet loss detected. Retransmitting...\n";
+            // If packet loss occurred, simulate retransmission
+            if ($packetLoss) {
+                // Log packet loss and initiate retransmission
+                Log::addMessage('warning', 'Packet loss detected. Retransmitting...');
 
-            // Simulate a delay before retransmission
-            usleep(mt_rand(100, 500) * 1000);
+                // Simulate a delay before retransmission
+                usleep(mt_rand(100, 500) * 1000);
 
-            // Retransmit the packet (recursive call)
-            return $this->handleIncomingPacket($packet);
+                // Retransmit the packet (recursive call)
+                return $this->handleIncomingPacket($packet);
+            }
+
+            // If the packet was received successfully, return the packet
+            return $packet;
+        } catch (\Exception $e) {
+            // Log the error
+            Log::addMessage('error', 'An error occurred while handling incoming packet: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
+            ];
         }
-
-        // If the packet was received successfully, return the packet
-        return $packet;
     }
+
 
 }
