@@ -7,6 +7,7 @@ use models\Transport_layer;
 use models\Session_layer;
 use models\Presentation_layer;
 use models\Application_layer;
+use utils\Log;
 
 require_once 'models/Physical_layer.php';
 require_once 'models/Data_link_layer.php';
@@ -15,6 +16,7 @@ require_once 'models/Transport_layer.php';
 require_once 'models/Session_layer.php';
 require_once 'models/Presentation_layer.php';
 require_once 'models/Application_layer.php';
+require_once 'utils/Log.php';
 
 
 class OsiSimulationController {
@@ -39,6 +41,7 @@ class OsiSimulationController {
 
     public function simulateDataTransmission($data) {
         // Process data through the OSI layers (top to bottom)
+        Log::addMessage('info', 'Simulation started.');
         $data = $this->applicationLayer->sendRequest($data);
         $data['payload'] = $this->presentationLayer->formatData($data['payload']);
         $this->sessionLayer->createSession();
@@ -60,6 +63,7 @@ class OsiSimulationController {
     //    $this->sessionLayer->closeSession();
         $data['payload'] = $this->presentationLayer->unformatData($data['payload']);
         $data = $this->applicationLayer->receiveRequest($data);
+        Log::addMessage('info', 'Simulation finished.');
         return $data;
     }
     public function sendDataPacket($dataPacket) {
