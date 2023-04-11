@@ -23,9 +23,19 @@ class Data_link_layer
      * @param array $packet The data packet to be encoded
      * @return array The encoded frames
      */
-    public function encodeFrames(array $packet): array
+    public function encodeFrames($packet): array
     {
         try {
+            // Ensure the packet is not null
+            if ($packet === null) {
+                throw new \Exception('Packet is null');
+            }
+
+            // Ensure the packet is an array
+            if (!is_array($packet)) {
+                throw new \Exception('Packet is not an array');
+            }
+
             $header = $packet['header'];
             $payloadText = $packet['payload'];
 
