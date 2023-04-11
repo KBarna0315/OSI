@@ -106,7 +106,11 @@ class Data_link_layer
                 }
 
                 // Convert binary payload back to the original text
-                $decodedPayload .= $this->binaryToString($payload);
+                if (is_string($payload) && strlen($payload) > 0) {
+                    $decodedPayload .= $this->binaryToString($payload);
+                } else {
+                    throw new \TypeError('Invalid payload type or length');
+                }
             }
 
             // Ensure the header is not empty
@@ -120,8 +124,15 @@ class Data_link_layer
                 'payload' => $decodedPayload,
             ];
 
-            Log::addMessage('info', 'Decoded frames into packet');
+            Log::addMessage('info', 'Decoded frames into packet.');
             return $packet;
+        } catch (\TypeError $e) {
+            // Log the error
+            Log::addMessage('error', 'A type error occurred while decoding frames: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
+            ];
         } catch (\Exception $e) {
             // Log the error
             Log::addMessage('error', 'An error occurred while decoding frames: ' . $e->getMessage());
@@ -131,6 +142,7 @@ class Data_link_layer
             ];
         }
     }
+
 
     /**
      * Calculate a simple parity bit for the given data.
