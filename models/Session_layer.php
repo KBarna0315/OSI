@@ -53,11 +53,16 @@ class Session_layer
      * Close the session and clear session-related metadata.
      */
     public function closeSession() {
-        if (!empty($this->sessionMetadata)) {
-            $this->sessionMetadata = [];
-            echo "Session closed and session metadata cleared.\n";
-        } else {
-            echo "No active session to close.\n";
+        try {
+            if (!empty($this->sessionMetadata)) {
+                $this->sessionMetadata = [];
+                Log::addMessage('info', 'Session closed and session metadata cleared');
+            } else {
+                Log::addMessage('info', 'No active session to close');
+            }
+        } catch (\Exception $e) {
+            Log::addMessage('error', 'An error occurred while closing the session: ' . $e->getMessage());
+            throw new \Exception("Error closing session: " . $e->getMessage());
         }
     }
     public function handleSessionErrors() { //Handle session-related errors and interruptions.
