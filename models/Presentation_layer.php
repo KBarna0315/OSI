@@ -1,6 +1,8 @@
 <?php
 
 namespace models;
+namespace models;
+use utils\Log;
 
 class Presentation_layer
 {
@@ -21,20 +23,35 @@ class Presentation_layer
     /**
      * Format and encrypt the data using a specified encryption algorithm and an encryption key
      * @param string $data The data to be encrypted
-     * @return string The encrypted and formatted data
+     * @return string|string[] The encrypted and formatted data or the error
      */
-    public function formatData($data) {
-        $this->encryptionKey = $this->generateEncryptionKey();
-        $cipher = 'aes-256-cbc'; // Choose the encryption algorithm
-        $ivlen = openssl_cipher_iv_length($cipher);
-        $iv = openssl_random_pseudo_bytes($ivlen); // Generate an initialization vector
-        // Encrypt the data using the key and the chosen cipher
-        $encryptedData = openssl_encrypt($data, $cipher, $this->encryptionKey, 0, $iv);
-        // Combine the initialization vector and the encrypted data
-        $combinedData = base64_encode($iv . $encryptedData);
+    public function formatData(string $data): string {
+        try {
+            if (empty($data)) {
+                throw new \Exception('Empty data');
+            }
 
-        return $combinedData;
+            $this->encryptionKey = $this->generateEncryptionKey();
+            $cipher = 'aes-256-cbc'; // Choose the encryption algorithm
+            $ivlen = openssl_cipher_iv_length($cipher);
+            $iv = openssl_random_pseudo_bytes($ivlen); // Generate an initialization vector
+            // Encrypt the data using the key and the chosen cipher
+            $encryptedData = openssl_encrypt($data, $cipher, $this->encryptionKey, 0, $iv);
+            // Combine the initialization vector and the encrypted data
+            $combinedData = base64_encode($iv . $encryptedData);
+
+            Log::addMessage('info', 'Data encrypted successfully.');
+            return $combinedData;
+        } catch (\Exception $e) {
+            // Log the error
+            Log::addMessage('error', 'An error occurred while formatting data: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
+            ];
+        }
     }
+
 
     /**
      * Decrypt and unformat the data using the specified encryption algorithm and the encryption key
