@@ -52,7 +52,7 @@ class Transport_layer
             // or congestion control. For this simple example, we will just pass the data packet through unmodified.
 
             // Log successful transmission
-            Log::addMessage('info', 'Data packet transmitted successfully');
+            Log::addMessage('info', 'Data packet transmitted successfully.');
 
             return $dataPacket;
         } catch (\Exception $e) {
@@ -70,31 +70,44 @@ class Transport_layer
      *
      * @param array $dataPacket The data packet received from the sender.
      * @return array The received data packet, to be passed to the next layer for further processing.
+     * @throws \Exception error
      */
-    public function receiveData($dataPacket)
+    public function receiveData(array $dataPacket): array
     {
-        $header = $dataPacket['header'];
-        // Extract the header information from the data packet
-        $sourcePort = $header['source_port'];
-        $destinationPort = $header['destination_port'];
-        $sequenceNumber = $header['sequence_number'];
-        $acknowledgmentNumber = $header['acknowledgment_number'];
+        try {
+            $header = $dataPacket['header'];
+            // Extract the header information from the data packet
+            $sourcePort = $header['source_port'];
+            $destinationPort = $header['destination_port'];
+            $sequenceNumber = $header['sequence_number'];
+            $acknowledgmentNumber = $header['acknowledgment_number'];
 
-        // Update the acknowledgment number
-        $acknowledgmentNumber = $sequenceNumber + 1;
+            // Update the acknowledgment number
+            $acknowledgmentNumber = $sequenceNumber + 1;
 
-        // Send an acknowledgment to the sender
-        $ackPacket = [
-            'source_port' => $destinationPort,
-            'destination_port' => $sourcePort,
-            'sequence_number' => $acknowledgmentNumber,
-            'acknowledgment_number' => 0,
-        ];
-        $this->sendData($ackPacket);
+            // Send an acknowledgment to the sender
+            $ackPacket = [
+                'source_port' => $destinationPort,
+                'destination_port' => $sourcePort,
+                'sequence_number' => $acknowledgmentNumber,
+                'acknowledgment_number' => 0,
+            ];
+            $this->sendData($ackPacket);
 
-        // Return the received data packet to the caller for further processing
-        return $dataPacket;
+            Log::addMessage('info', 'Data received.');
+
+            // Return the received data packet to the caller for further processing
+            return $dataPacket;
+        } catch (\Exception $e) {
+            // Log the error
+            Log::addMessage('error', 'An error occurred while receiving data: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
+            ];
+        }
     }
+
 
     /**
      * Validate the checksum of a payload against a received checksum.
