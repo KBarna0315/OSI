@@ -208,6 +208,15 @@ textarea#log-messages {
     font-weight: bold;
     margin-bottom: 4px;
 }
+input:invalid {
+    border-color: #ff0000;
+}
+
+input:invalid + span {
+    color: #ff0000;
+    margin-top: 0.5rem;
+}
+
 
 
 
