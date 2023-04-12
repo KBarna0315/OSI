@@ -14,6 +14,7 @@ class Transport_layer
     public function terminateConnection() { // Terminate the connection with the destination node.
 
     }
+
     /**
      * Send data to the destination, simulating the transport layer.
      * For this example, we'll assume that the data is already prepared
@@ -21,6 +22,7 @@ class Transport_layer
      *
      * @param array $dataPacket The data packet containing header and payload
      * @return array The data packet after it has been transmitted
+     * @throws \Exception error
      */
     public function sendData(array $dataPacket): array {
         try {
