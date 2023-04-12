@@ -1,7 +1,7 @@
 <?php
 
 namespace models;
-namespace models;
+require_once 'utils/Log.php';
 use utils\Log;
 
 class Presentation_layer
