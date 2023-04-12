@@ -56,25 +56,43 @@ class Presentation_layer
     /**
      * Decrypt and unformat the data using the specified encryption algorithm and the encryption key
      * @param string $formattedData The encrypted and formatted data
-     * @return string The decrypted and unformatted data
+     * @return string|string[] The decrypted and unformatted data or the error
      */
-    public function unformatData($formattedData) {
-        $key = $this->encryptionKey;
-        $cipher = 'aes-256-cbc'; // Choose the encryption algorithm
-        $ivlen = openssl_cipher_iv_length($cipher);
+    public function unformatData(string $formattedData): string {
+        try {
+            if (empty($this->encryptionKey)) {
+                throw new \Exception('Encryption key is missing');
+            }
 
-        // Decode the base64-encoded formatted data
-        $decodedData = base64_decode($formattedData);
+            $key = $this->encryptionKey;
+            $cipher = 'aes-256-cbc'; // Choose the encryption algorithm
+            $ivlen = openssl_cipher_iv_length($cipher);
 
-        // Extract the initialization vector and the encrypted data
-        $iv = substr($decodedData, 0, $ivlen);
-        $encryptedData = substr($decodedData, $ivlen);
+            // Decode the base64-encoded formatted data
+            $decodedData = base64_decode($formattedData);
 
-        // Decrypt the data using the key and the chosen cipher
-        $unformattedData = openssl_decrypt($encryptedData, $cipher, $key, 0, $iv);
+            // Extract the initialization vector and the encrypted data
+            if (strlen($decodedData) < $ivlen) {
+                throw new \Exception('Formatted data is too short');
+            }
+            $iv = substr($decodedData, 0, $ivlen);
+            $encryptedData = substr($decodedData, $ivlen);
 
-        return $unformattedData;
+            // Decrypt the data using the key and the chosen cipher
+            $unformattedData = openssl_decrypt($encryptedData, $cipher, $key, 0, $iv);
+
+            Log::addMessage('info', 'Data decrypted successfully.');
+            return $unformattedData;
+        } catch (\Exception $e) {
+            // Log the error
+            Log::addMessage('error', 'An error occurred while unformatting data: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
+            ];
+        }
     }
+
 
     public function encryptData($data) { //Encrypt data for secure transmission.
 
