@@ -1,6 +1,8 @@
 <?php
 
 namespace models;
+require_once 'utils/Log.php';
+use utils\Log;
 
 class Session_layer
 {
@@ -18,7 +20,8 @@ class Session_layer
      * @return string The unique session ID
      * @throws \Exception If there's an error while creating the session
      */
-    public function createSession($timeout = 30) { //Establish a session with the destination node.
+    public function createSession($timeout = 30): string
+    { //Establish a session with the destination node.
         try {
             // Generate a unique session ID
             $this->sessionId = uniqid('session_', true);
@@ -35,9 +38,14 @@ class Session_layer
                 'end_time' => time() + $timeout,
             ];
 
+            // Log the successful session creation
+            Log::addMessage('info', 'Session created successfully.');
             return $this->sessionId;
 
         } catch (\Exception $e) {
+            // Log the error and re-throw it
+            Log::addMessage('error', 'An error occurred while creating session: ' . $e->getMessage());
+
             throw new \Exception("Error creating session: " . $e->getMessage());
         }
     }
