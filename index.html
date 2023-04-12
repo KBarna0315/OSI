@@ -31,6 +31,7 @@
             <thead>
             <tr>
                 <th>Frame</th>
+                <th>Sequence Number</th>
                 <th>Header</th>
                 <th>Payload</th>
             </tr>
@@ -61,21 +62,18 @@
     function formatHeader(header) {
         let formattedHeader = '<ul>';
         for (const key in header) {
-            if (header.hasOwnProperty(key)) {
-                if (key === 'network_header') {
-                    formattedHeader += `<li>${key}:<ul class="inner-list">`;
-                    for (const innerKey in header[key]) {
-                        formattedHeader += `<li>${innerKey}: ${header[key][innerKey]}</li>`;
-                    }
-                    formattedHeader += '</ul></li>';
-                } else {
-                    formattedHeader += `<li>${key}: ${header[key]}</li>`;
+            if (header.hasOwnProperty(key) && key !== 'sequence_number' && key !== 'network_header') {
+                formattedHeader += `<li>${key}: ${header[key]}</li>`;
+            } else if (key === 'network_header') {
+                for (const innerKey in header[key]) {
+                    formattedHeader += `<li>${innerKey}: ${header[key][innerKey]}</li>`;
                 }
             }
         }
         formattedHeader += '</ul>';
         return formattedHeader;
     }
+
 
 
 
@@ -112,14 +110,18 @@
             tableBody.innerHTML = '';
             result.transmittedData.forEach((frame, index) => {
                 const row = tableBody.insertRow(-1);
+
                 const cell1 = row.insertCell(0);
-                const cell2 = row.insertCell(1);
+                const cell2 = row.insertCell(1); // Add this new cell for the sequence_number
                 const cell3 = row.insertCell(2);
+                const cell4 = row.insertCell(3);
 
                 cell1.textContent = index + 1;
-                cell2.innerHTML = formatHeader(frame.frame_header); // Use formatHeader() here
-                cell3.textContent = frame.payload;
+                cell2.textContent = frame.frame_header.sequence_number; // Add the sequence_number value to the new cell
+                cell3.innerHTML = formatHeader(frame.frame_header);
+                cell4.textContent = frame.payload;
             });
+
 
             document.getElementById('received-data').textContent = result.receivedData;
 
