@@ -58,6 +58,27 @@
     const submitButton = simulationForm.querySelector('button[type="submit"]');
     const loader = document.getElementById('loader');
 
+    function formatHeader(header) {
+        let formattedHeader = '<ul>';
+        for (const key in header) {
+            if (header.hasOwnProperty(key)) {
+                if (key === 'network_header') {
+                    formattedHeader += `<li>${key}:<ul class="inner-list">`;
+                    for (const innerKey in header[key]) {
+                        formattedHeader += `<li>${innerKey}: ${header[key][innerKey]}</li>`;
+                    }
+                    formattedHeader += '</ul></li>';
+                } else {
+                    formattedHeader += `<li>${key}: ${header[key]}</li>`;
+                }
+            }
+        }
+        formattedHeader += '</ul>';
+        return formattedHeader;
+    }
+
+
+
     simulationForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -96,7 +117,7 @@
                 const cell3 = row.insertCell(2);
 
                 cell1.textContent = index + 1;
-                cell2.textContent = JSON.stringify(frame.frame_header);
+                cell2.innerHTML = formatHeader(frame.frame_header); // Use formatHeader() here
                 cell3.textContent = frame.payload;
             });
 
