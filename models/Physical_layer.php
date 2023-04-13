@@ -55,56 +55,41 @@ class Physical_layer
      *
      * @param array $frames
      * @return array
+     * @throws \Exception If an error occurs during receiving bits
      */
     public function receiveBits(array $frames): array
     {
         $receivedFrames = [];
 
-        try {
-            foreach ($frames as $frame) {
-                // Introduce a delay to simulate the transmission time
-                usleep(10000); // 10 ms delay
+        foreach ($frames as $frame) {
+            // Introduce a delay to simulate the transmission time
+            usleep(10000); // 10 ms delay
 
-                // Simulate a small probability of bit errors during transmission
-                $bitErrorRate = 0.0001; // 0.01% chance of bit errors
+            // Simulate a small probability of bit errors during transmission
+            $bitErrorRate = 0.0001; // 0.01% chance of bit errors
 
-                if (mt_rand(1, 1000000) <= 1000000 * $bitErrorRate) {
-                    // If a bit error occurs, randomly flip a bit in the payload
-                    $randomBit = mt_rand(0, strlen($frame['payload']) * 8 - 1);
-                    $bytePos = (int)($randomBit / 8);
-                    $bitPos = $randomBit % 8;
+            if (mt_rand(1, 1000000) <= 1000000 * $bitErrorRate) {
+                // If a bit error occurs, randomly flip a bit in the payload
+                $randomBit = mt_rand(0, strlen($frame['payload']) * 8 - 1);
+                $bytePos = (int)($randomBit / 8);
+                $bitPos = $randomBit % 8;
 
-                    // Check if the byte position is within the payload range
-                    if ($bytePos < strlen($frame['payload'])) {
-                        $frame['payload'][$bytePos] = chr(ord($frame['payload'][$bytePos]) ^ (1 << $bitPos));
-                    } else {
-                        throw new \TypeError('Payload index out of range');
-                    }
+                // Check if the byte position is within the payload range
+                if ($bytePos < strlen($frame['payload'])) {
+                    $frame['payload'][$bytePos] = chr(ord($frame['payload'][$bytePos]) ^ (1 << $bitPos));
+                } else {
+                    Log::addMessage('error','Payload index out of range');
+                    throw new \TypeError('Payload index out of range');
                 }
-
-                $receivedFrames[] = [
-                    'frame_header' => $frame['frame_header'],
-                    'payload' => $frame['payload'],
-                ];
             }
 
-            Log::addMessage('info', 'Received bits successfully.');
-        } catch (\TypeError $e) {
-            // Log the error
-            Log::addMessage('error', 'A type error occurred while receiving bits: ' . $e->getMessage());
-
-            return [
-                'error' => 'Error: ' . $e->getMessage(),
-            ];
-        } catch (\Exception $e) {
-            // Log the error
-            Log::addMessage('error', 'An error occurred while receiving bits: ' . $e->getMessage());
-
-            return [
-                'error' => 'Error: ' . $e->getMessage(),
+            $receivedFrames[] = [
+                'frame_header' => $frame['frame_header'],
+                'payload' => $frame['payload'],
             ];
         }
 
+        Log::addMessage('info', 'Received bits successfully.');
         return $receivedFrames;
     }
 
