@@ -16,7 +16,7 @@ class Network_layer
      * @return array
      * @throws \Exception If an error occurs during routing
      */
-    public function routePacket($dataPacket): array
+    public function routePacket(array $dataPacket): array
     {
         // Simulate network latency by adding a delay
         $this->simulateNetworkLatency();
@@ -65,33 +65,26 @@ class Network_layer
      *
      * @param array $packet The packet to be handled.
      * @return array The successfully received packet.
+     * @throws \Exception If an error occurs during handling incoming packet
      */
-    public function handleIncomingPacket($packet): array{
-        try {
-            $packetLoss = $this->simulatePacketLoss();
+    public function handleIncomingPacket(array $packet): array
+    {
+        $packetLoss = $this->simulatePacketLoss();
 
-            // If packet loss occurred, simulate retransmission
-            if ($packetLoss) {
-                // Log packet loss and initiate retransmission
-                Log::addMessage('warning', 'Packet loss detected. Retransmitting...');
+        // If packet loss occurred, simulate retransmission
+        if ($packetLoss) {
+            // Log packet loss and initiate retransmission
+            Log::addMessage('warning', 'Packet loss detected. Retransmitting...');
 
-                // Simulate a delay before retransmission
-                usleep(mt_rand(100, 500) * 1000);
+            // Simulate a delay before retransmission
+            usleep(mt_rand(100, 500) * 1000);
 
-                // Retransmit the packet (recursive call)
-                return $this->handleIncomingPacket($packet);
-            }
-
-            // If the packet was received successfully, return the packet
-            return $packet;
-        } catch (\Exception $e) {
-            // Log the error
-            Log::addMessage('error', 'An error occurred while handling incoming packet: ' . $e->getMessage());
-
-            return [
-                'error' => 'Error: ' . $e->getMessage(),
-            ];
+            // Retransmit the packet (recursive call)
+            return $this->handleIncomingPacket($packet);
         }
+
+        // If the packet was received successfully, return the packet
+        return $packet;
     }
 
 
