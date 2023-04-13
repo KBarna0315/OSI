@@ -56,41 +56,34 @@ class Presentation_layer
     /**
      * Decrypt and unformat the data using the specified encryption algorithm and the encryption key
      * @param string $formattedData The encrypted and formatted data
-     * @return string|string[] The decrypted and unformatted data or the error
+     * @return string The decrypted and unformatted data
+     * @throws \Exception If an error occurs during unformatting the data
      */
     public function unformatData(string $formattedData): string {
-        try {
-            if (empty($this->encryptionKey)) {
-                throw new \Exception('Encryption key is missing');
-            }
-
-            $key = $this->encryptionKey;
-            $cipher = 'aes-256-cbc'; // Choose the encryption algorithm
-            $ivlen = openssl_cipher_iv_length($cipher);
-
-            // Decode the base64-encoded formatted data
-            $decodedData = base64_decode($formattedData);
-
-            // Extract the initialization vector and the encrypted data
-            if (strlen($decodedData) < $ivlen) {
-                throw new \Exception('Formatted data is too short');
-            }
-            $iv = substr($decodedData, 0, $ivlen);
-            $encryptedData = substr($decodedData, $ivlen);
-
-            // Decrypt the data using the key and the chosen cipher
-            $unformattedData = openssl_decrypt($encryptedData, $cipher, $key, 0, $iv);
-
-            Log::addMessage('info', 'Data decrypted successfully.');
-            return $unformattedData;
-        } catch (\Exception $e) {
-            // Log the error
-            Log::addMessage('error', 'An error occurred while unformatting data: ' . $e->getMessage());
-
-            return [
-                'error' => 'Error: ' . $e->getMessage(),
-            ];
+        if (empty($this->encryptionKey)) {
+            throw new \Exception('Encryption key is missing');
         }
+
+        $key = $this->encryptionKey;
+        $cipher = 'aes-256-cbc'; // Choose the encryption algorithm
+        $ivlen = openssl_cipher_iv_length($cipher);
+
+        // Decode the base64-encoded formatted data
+        $decodedData = base64_decode($formattedData);
+
+        // Extract the initialization vector and the encrypted data
+        if (strlen($decodedData) < $ivlen) {
+            Log::addMessage('error', 'Formatted data is too short!');
+            throw new \Exception('Formatted data is too short');
+        }
+        $iv = substr($decodedData, 0, $ivlen);
+        $encryptedData = substr($decodedData, $ivlen);
+
+        // Decrypt the data using the key and the chosen cipher
+        $unformattedData = openssl_decrypt($encryptedData, $cipher, $key, 0, $iv);
+
+        Log::addMessage('info', 'Data decrypted successfully.');
+        return $unformattedData;
     }
 
 
