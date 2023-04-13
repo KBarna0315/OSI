@@ -77,59 +77,47 @@ class Data_link_layer
      * Decodes the frames back into a packet
      * @param array $frames
      * @return array
+     * @throws \Exception If there is a missing header or another error occurs during decoding
+     * @throws \TypeError If there is an invalid payload type or length
      */
     public function decodeFrames(array $frames): array
     {
-        try {
-            $decodedPayload = '';
-            $header = [];
+        $decodedPayload = '';
+        $header = [];
 
-            // Process each frame
-            foreach ($frames as $frame) {
-                $frameHeader = $frame['frame_header'];
-                $payload = $frame['payload'];
+        // Process each frame
+        foreach ($frames as $frame) {
+            $frameHeader = $frame['frame_header'];
+            $payload = $frame['payload'];
 
-                // Extract the network header from the first frame
-                if ($frameHeader['sequence_number'] === 0) {
-                    $header = $frameHeader['network_header'];
-                }
-
-                // Convert binary payload back to the original text
-                if (is_string($payload) && strlen($payload) > 0) {
-                    $decodedPayload .= $this->binaryToString($payload);
-                } else {
-                    throw new \TypeError('Invalid payload type or length');
-                }
+            // Extract the network header from the first frame
+            if ($frameHeader['sequence_number'] === 0) {
+                $header = $frameHeader['network_header'];
             }
 
-            // Ensure the header is not empty
-            if (empty($header)) {
-                throw new \Exception('Header is missing');
+            // Convert binary payload back to the original text
+            if (is_string($payload) && strlen($payload) > 0) {
+                $decodedPayload .= $this->binaryToString($payload);
+            } else {
+                Log::addMessage('error', 'Invalid payload type or length');
+                throw new \TypeError('Invalid payload type or length');
             }
-
-            // Reassemble the packet with the decoded payload and the extracted header
-            $packet = [
-                'header' => $header,
-                'payload' => $decodedPayload,
-            ];
-
-            Log::addMessage('info', 'Decoded frames into packet.');
-            return $packet;
-        } catch (\TypeError $e) {
-            // Log the error
-            Log::addMessage('error', 'A type error occurred while decoding frames: ' . $e->getMessage());
-
-            return [
-                'error' => 'Error: ' . $e->getMessage(),
-            ];
-        } catch (\Exception $e) {
-            // Log the error
-            Log::addMessage('error', 'An error occurred while decoding frames: ' . $e->getMessage());
-
-            return [
-                'error' => 'Error: ' . $e->getMessage(),
-            ];
         }
+
+        // Ensure the header is not empty
+        if (empty($header)) {
+            Log::addMessage('error', 'Header is missing');
+            throw new \Exception('Header is missing');
+        }
+
+        // Reassemble the packet with the decoded payload and the extracted header
+        $packet = [
+            'header' => $header,
+            'payload' => $decodedPayload,
+        ];
+
+        Log::addMessage('info', 'Decoded frames into packet.');
+        return $packet;
     }
 
 
