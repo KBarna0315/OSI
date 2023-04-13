@@ -24,44 +24,38 @@ class Transport_layer
      * @return array The data packet after it has been transmitted
      * @throws \Exception error
      */
-    public function sendData(array $dataPacket): array {
-        try {
-            // Define a maximum number of retransmissions
-            $maxRetransmissions = 3;
+    public function sendData(array $dataPacket): array
+    {
+        // Define a maximum number of retransmissions
+        $maxRetransmissions = 3;
 
-            // Simulate a random packet loss rate (0-100)
-            $packetLossRate = rand(0, 100); //Maybe we can use the Network layer simulate packet loss
+        // Simulate a random packet loss rate (0-100)
+        $packetLossRate = rand(0, 100);
 
-            // Simulate retransmissions if the packet is lost
-            for ($retransmissions = 0; $retransmissions < $maxRetransmissions; $retransmissions++) {
-                if ($packetLossRate > 10) { // 10% chance of successful transmission
-                    // Packet was transmitted successfully
-                    break;
-                } else {
-                    // Packet was lost; increase the packet loss rate
-                    $packetLossRate += 10;
-                }
+        // Simulate retransmissions if the packet is lost
+        for ($retransmissions = 0; $retransmissions < $maxRetransmissions; $retransmissions++) {
+            if ($packetLossRate > 10) { // 10% chance of successful transmission
+                // Packet was transmitted successfully
+                break;
+            } else {
+                // Packet was lost; increase the packet loss rate
+                $packetLossRate += 10;
             }
-
-            // Check if the maximum number of retransmissions was exceeded
-            if ($retransmissions >= $maxRetransmissions) {
-                throw new \Exception("Data transmission failed after $maxRetransmissions retransmissions");
-            }
-
-            // Perform any other necessary transport-layer actions, such as error checking,
-            // or congestion control. For this simple example, we will just pass the data packet through unmodified.
-
-            // Log successful transmission
-            Log::addMessage('info', 'Data packet transmitted successfully.');
-
-            return $dataPacket;
-        } catch (\Exception $e) {
-            // Log the error
-            Log::addMessage('error', 'An error occurred while transmitting data: ' . $e->getMessage());
-
-            // Throw the exception to be caught by the caller
-            throw new \Exception("Error transmitting data: " . $e->getMessage());
         }
+
+        // Check if the maximum number of retransmissions was exceeded
+        if ($retransmissions >= $maxRetransmissions) {
+            // Log the error
+            Log::addMessage('error', "Data transmission failed after $maxRetransmissions retransmissions");
+            throw new \Exception("Data transmission failed after $maxRetransmissions retransmissions");
+        }
+
+        // Perform any other necessary transport-layer actions, such as error checking,
+        // or congestion control. For this simple example, we will just pass the data packet through unmodified.
+
+        // Log successful transmission
+        Log::addMessage('info', 'Data packet transmitted successfully.');
+        return $dataPacket;
     }
 
     /**
