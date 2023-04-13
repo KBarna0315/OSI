@@ -15,17 +15,19 @@ class Application_layer
      * @param mixed $request The request to be sent to the server, in a format specific to the application
      * @return array An associative array representing the data packet that was sent to the server, including headers
      *               Example: ['payload' => '...', 'header' => ['sequence_number' => ..., 'acknowledgment_number' => ..., ...]]
+     * @throws \Exception
      */
-    public function sendRequest($request) {
+    public function sendRequest(mixed $request): array
+    {
         try {
             // Convert the request into a data packet with appropriate headers, similar to a TCP segment
             $dataPacket = $this->createDataPacket($request);
             Log::addMessage('info', 'Sending an application-level request to the server.');
             return $dataPacket;
         } catch (\Exception $e) {
-            // Log the error and return null or throw an exception
+            // Log the error and throw an exception
             Log::addMessage('error', 'An error occurred while sending the request: ' . $e->getMessage());
-            return null;
+            throw $e;
         }
     }
 
