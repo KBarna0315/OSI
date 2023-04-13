@@ -14,28 +14,26 @@ class Network_layer
      *
      * @param array $dataPacket
      * @return array
+     * @throws \Exception If an error occurs during routing
      */
-    public function routePacket($dataPacket): ?array{
-        try {
-            // Simulate network latency by adding a delay
-            $this->simulateNetworkLatency();
+    public function routePacket($dataPacket): array
+    {
+        // Simulate network latency by adding a delay
+        $this->simulateNetworkLatency();
 
-            // Simulate random packet loss
-            if ($this->simulatePacketLoss()) {
-                // In a real-world scenario, the router would detect the packet loss and initiate a retransmission.
-                // However, we won't be able to demonstrate retransmission in this simulation.
-                return null;
-            }
-
-            // Return the data packet unchanged, as we are not modifying it during routing
-            Log::addMessage('info','Routing the data packet through the network.');
-            return $dataPacket;
-        } catch (\Exception $e) {
-            // Log the error
-            Log::addMessage('warning', 'An error occurred while routing packet: ' . $e->getMessage());
-            return null;
+        // Simulate random packet loss
+        if ($this->simulatePacketLoss()) {
+            // In a real-world scenario, the router would detect the packet loss and initiate a retransmission.
+            // However, we won't be able to demonstrate retransmission in this simulation.
+            Log::addMessage('warning', 'Simulated packet loss detected.');
+            throw new \Exception('Simulated packet loss detected.');
         }
+
+        // Return the data packet unchanged, as we are not modifying it during routing
+        Log::addMessage('info', 'Routing the data packet through the network.');
+        return $dataPacket;
     }
+
     /**
      * Simulate network latency by adding a delay to the execution
      */
