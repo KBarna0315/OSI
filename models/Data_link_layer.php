@@ -22,66 +22,55 @@ class Data_link_layer
      * Encode the data packet into frames that can be transmitted through the lower layer
      * @param array $packet The data packet to be encoded
      * @return array The encoded frames
+     * @throws \Exception If the packet is null, not an array, or the payload is empty
      */
     public function encodeFrames($packet): array
     {
-        try {
-            // Ensure the packet is not null
-            if ($packet === null) {
-                throw new \Exception('Packet is null');
-            }
-
-            // Ensure the packet is an array
-            if (!is_array($packet)) {
-                throw new \Exception('Packet is not an array');
-            }
-
-            $header = $packet['header'];
-            $payloadText = $packet['payload'];
-
-            // Ensure the payload is not empty
-            if (empty($payloadText)) {
-                throw new \Exception('Payload is empty');
-            }
-
-            // Convert the payload text into a binary string
-            $payloadBinary = $this->textToBinary($payloadText);
-
-            // Update the payload with the binary string
-            $packet['payload'] = $payloadBinary;
-
-            // Split the binary string into frames
-            $frames = [];
-            $frameSize = 8; // Example frame size in bits
-
-            for ($i = 0, $sequenceNumber = 0; $i < strlen($payloadBinary); $i += $frameSize, $sequenceNumber++) {
-                $framePayload = substr($payloadBinary, $i, $frameSize);
-                $parityBit = $this->calculateParityBit($framePayload);
-
-                $frameHeader = [
-                    'sequence_number' => $sequenceNumber,
-                    'network_header' => $header, // include the original network header information
-                ];
-
-                $frame = [
-                    'header' => $frameHeader,
-                    'payload' => $framePayload,
-                    'parity_bit' => $parityBit,
-                ];
-
-                $frames[] = $frame;
-            }
-
-            Log::addMessage('info', 'Encoding frames for packet');
-            return $frames;
-        } catch (\Exception $e) {
-            // Log the error
-            Log::addMessage('error', 'An error occurred while encoding frames: ' . $e->getMessage());
-
-            return [
-                'error' => 'Error: ' . $e->getMessage(),
-            ];
+        if ($packet === null) {
+            Log::addMessage('error', 'Packet is null');
+            throw new \Exception('Packet is null');
         }
+
+        if (!is_array($packet)) {
+            Log::addMessage('error', 'Packet is not an array');
+            throw new \Exception('Packet is not an array');
+        }
+
+        $header = $packet['header'];
+        $payloadText = $packet['payload'];
+
+        if (empty($payloadText)) {
+            Log::addMessage('error', 'Payload is empty');
+            throw new \Exception('Payload is empty');
+        }
+
+        $payloadBinary = $this->textToBinary($payloadText);
+
+        $packet['payload'] = $payloadBinary;
+
+        $frames = [];
+        $frameSize = 8;
+
+        for ($i = 0, $sequenceNumber = 0; $i < strlen($payloadBinary); $i += $frameSize, $sequenceNumber++) {
+            $framePayload = substr($payloadBinary, $i, $frameSize);
+            $parityBit = $this->calculateParityBit($framePayload);
+
+            $frameHeader = [
+                'sequence_number' => $sequenceNumber,
+                'network_header' => $header,
+            ];
+
+            $frame = [
+                'header' => $frameHeader,
+                'payload' => $framePayload,
+                'parity_bit' => $parityBit,
+            ];
+
+            $frames[] = $frame;
+        }
+
+        Log::addMessage('info', 'Encoding frames for packet');
+        return $frames;
     }
 
     /**
