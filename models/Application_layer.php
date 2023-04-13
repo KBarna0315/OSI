@@ -35,72 +35,55 @@ class Application_layer
      * Process an application-level request received from the server.
      * @param array $receivedData An associative array containing the payload and header data received from the server
      *                           Example: ['payload' => '...', 'header' => ['sequence_number' => ..., 'acknowledgment_number' => ..., ...]]
-     * @return array An associative array containing the response or error information
-     *                          Example: ['response' => '...', ...] or ['error' => '...', ...]
+     * @return array An associative array containing the response
+     *                          Example: ['response' => '...', ...]
      * @throws \Exception If the received data packet is invalid or if there was an error processing the request
      */
     public function receiveRequest(array $receivedData): array {
-        try {
-            // Ensure the received data packet has the required keys
-            if (!isset($receivedData['payload'], $receivedData['header'])) {
-                throw new \Exception('Invalid data packet: Missing payload or header');
-            }
+        // Ensure the received data packet has the required keys
+        if (!isset($receivedData['payload'], $receivedData['header'])) {
+            throw new \Exception('Invalid data packet: Missing payload or header');
+        }
 
-            // Extract the payload and header data from the received data packet
-            $payload = $receivedData['payload'];
-            $header = $receivedData['header'];
+        // Extract the payload and header data from the received data packet
+        $payload = $receivedData['payload'];
+        $header = $receivedData['header'];
 
-            // Extract the header fields
-            $sequenceNumber = $header['sequence_number'];
-            $acknowledgmentNumber = $header['acknowledgment_number'];
-            $checksum = $header['checksum'];
-            $windowSize = $header['window_size'];
+        // Extract the header fields
+        $sequenceNumber = $header['sequence_number'];
+        $acknowledgmentNumber = $header['acknowledgment_number'];
+        $checksum = $header['checksum'];
+        $windowSize = $header['window_size'];
 
-            // Check if the sequence number matches the expected acknowledgment number
-            if ($sequenceNumber === $acknowledgmentNumber) {
-                // Update the acknowledgment number
-                $acknowledgmentNumber = $sequenceNumber + strlen($payload);
+        // Check if the sequence number matches the expected acknowledgment number
+        if ($sequenceNumber === $acknowledgmentNumber) {
+            // Update the acknowledgment number
+            $acknowledgmentNumber = $sequenceNumber + strlen($payload);
 
-                // Check for buffer space (simulate flow control)
-                if ($windowSize >= strlen($payload)) {
-                    // Validate the payload checksum
-                    $transportLayer = new Transport_layer();
-                    if ($transportLayer->validateChecksum($payload, $checksum)) {
-                        Log::addMessage('info', 'Received and processed a valid data packet.');
-                        return $receivedData;
-                    } else {
-                        // Handle checksum validation failure
-                        Log::addMessage('error', 'Checksum validation failed for received data packet.');
-
-                        return [
-                            'error' => 'Error: Checksum validation failed',
-                        ];
-                    }
+            // Check for buffer space (simulate flow control)
+            if ($windowSize >= strlen($payload)) {
+                // Validate the payload checksum
+                $transportLayer = new Transport_layer();
+                if ($transportLayer->validateChecksum($payload, $checksum)) {
+                    Log::addMessage('info', 'Received and processed a valid data packet.');
+                    return $receivedData;
                 } else {
-                    // Handle insufficient buffer space
-                    Log::addMessage('warning', 'Received data packet exceeds buffer space.');
-
-                    return [
-                        'error' => 'Error: Insufficient buffer space',
-                    ];
+                    // Handle checksum validation failure
+                    Log::addMessage('error', 'Checksum validation failed for received data packet.');
+                    throw new \Exception('Error: Checksum validation failed');
                 }
             } else {
-                // Handle invalid sequence number
-                Log::addMessage('warning', 'Received data packet has an invalid sequence number.');
-
-                return [
-                    'error' => 'Error: Invalid sequence number',
-                ];
+                // Handle insufficient buffer space
+                Log::addMessage('warning', 'Received data packet exceeds buffer space.');
+                throw new \Exception('Error: Insufficient buffer space');
             }
-        } catch (\Exception $e) {
-            // Handle the error
-            Log::addMessage('error', 'An error occurred while receiving data packet: ' . $e->getMessage());
-
-            return [
-                'error' => 'Error: ' . $e->getMessage(),
-            ];
+        } else {
+            // Handle invalid sequence number
+            Log::addMessage('warning', 'Received data packet has an invalid sequence number.');
+            throw new \Exception('Error: Invalid sequence number');
         }
     }
+
     public function sendResponse($response) { //Send a response to the client based on the received request.
 
     }
