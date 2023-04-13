@@ -120,6 +120,8 @@ table {
 th, td {
     padding: 0.5rem;
     border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc; /* Add this line to add a vertical border */
+    vertical-align: middle;
 }
 
 th {
