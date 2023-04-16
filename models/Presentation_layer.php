@@ -60,8 +60,14 @@ class Presentation_layer
      */
     public function unformatData(string $formattedData): string {
         try {
+            if ($formattedData === null) {
+                throw new \Exception('Formatted data is missing');
+            }
             if (empty($this->encryptionKey)) {
                 throw new \Exception('Encryption key is missing');
+            }
+            if (!isset($formattedData)) {
+                throw new \TypeError('Encrypted data must be string');
             }
 
             $key = $this->encryptionKey;
@@ -84,6 +90,14 @@ class Presentation_layer
             Log::addMessage('info', 'Data decrypted successfully.');
             return $unformattedData;
         } catch (\Exception $e) {
+            // Log the error
+            Log::addMessage('error', 'An error occurred while unformatting data: ' . $e->getMessage());
+
+            return [
+                'error' => 'Error: ' . $e->getMessage(),
+            ];
+        }
+        catch (\TypeError $e) {
             // Log the error
             Log::addMessage('error', 'An error occurred while unformatting data: ' . $e->getMessage());
 
