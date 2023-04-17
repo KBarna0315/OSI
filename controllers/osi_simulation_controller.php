@@ -39,7 +39,16 @@ class OsiSimulationController {
         $this->applicationLayer = new Application_layer();
     }
 
-    public function simulateDataTransmission($data) {
+    /**
+     * Simulate the data transmission process through all the OSI model layers from top to bottom.
+     * The function starts from the Application layer, proceeds through the:
+     * Presentation, Session, Transport, Network, Data Link, and Physical layers, and finally returns the transmitted data.
+     * @param mixed $data The input data to be transmitted through the OSI layers string probably but let's make it mixed just to be sure
+     * @return array The transmitted data after it has been processed by all the OSI layers
+     * @throws Exception
+     */
+    public function simulateDataTransmission(mixed $data): array
+    {
         // Process data through the OSI layers (top to bottom)
         Log::addMessage('info', 'Simulation started.');
         $data = $this->applicationLayer->sendRequest($data);
