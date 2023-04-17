@@ -123,6 +123,8 @@ class Application_layer
         $checkSum = $transportLayer->calculateChecksum($request);
 
         $tcpHeader = [
+            'source_ip' => '192.168.1.1', // Example source IP address
+            'destination_ip' => '192.168.1.100', // Example destination IP address
             'source_port' => 12345, // Example source port
             'destination_port' => 80, // Example destination port
             'sequence_number' => $sequenceNumber,
@@ -138,6 +140,7 @@ class Application_layer
             'header' => $tcpHeader,
             'payload' => $request // The application-level request
         ];
+
         Log::addMessage('info', 'TCP like data packet created.');
         return $dataPacket;
     }
