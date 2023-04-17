@@ -9,13 +9,14 @@ class Network_layer
     private float $congestionProbability = 0.1; // Example congestion probability
     private float $linkFailureProbability = 0.05; // Example link failure probability
     private float $randomLossProbability = 0.02; // Example random packet loss probability
+
     /**
      * Route the data packet through the network, simulating a real-world router
      *
      * @param array $dataPacket
-     * @return array
+     * @return array|null
      */
-    public function routePacket($dataPacket): ?array{
+    public function routePacket(array $dataPacket): ?array{
         try {
             // Simulate network latency by adding a delay
             $this->simulateNetworkLatency();
