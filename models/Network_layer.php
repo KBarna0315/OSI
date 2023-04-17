@@ -111,6 +111,7 @@ class Network_layer
             }
 
             // If the packet was received successfully, return the packet
+            Log::addMessage('info', 'Packet received.');
             return $packet;
         } catch (\Exception $e) {
             // Log the error
