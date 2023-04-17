@@ -20,10 +20,11 @@ class Presentation_layer
         return base64_encode($key);
 
     }
+
     /**
      * Format and encrypt the data using a specified encryption algorithm and an encryption key
      * @param string $data The data to be encrypted
-     * @return string|string[] The encrypted and formatted data or the error
+     * @return string The encrypted and formatted data or the error
      */
     public function formatData(string $data): string {
         try {
