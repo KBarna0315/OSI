@@ -10,13 +10,15 @@ class Application_layer
     public function __construct() {
 
     }
+
     /**
      * Send an application-level request to the server.
      * @param mixed $request The request to be sent to the server, in a format specific to the application
-     * @return array An associative array representing the data packet that was sent to the server, including headers
+     * @return array|null An associative array representing the data packet that was sent to the server, including headers
      *               Example: ['payload' => '...', 'header' => ['sequence_number' => ..., 'acknowledgment_number' => ..., ...]]
      */
-    public function sendRequest($request) {
+    public function sendRequest(mixed $request): ?array
+    {
         try {
             // Convert the request into a data packet with appropriate headers, similar to a TCP segment
             $dataPacket = $this->createDataPacket($request);
