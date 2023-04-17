@@ -114,7 +114,8 @@ class Application_layer
      * @param string $request The application-level request data
      * @return array A simplified TCP data packet with a header and a payload
      */
-    public function createDataPacket($request) {
+    public function createDataPacket(string $request): array
+    {
         $sequenceNumber = 0; // Example sequence number
         $transportLayer = new Transport_layer();
         $checkSum = $transportLayer->calculateChecksum($request);
