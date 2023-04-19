@@ -56,6 +56,7 @@ class Session_layer
         try {
             if (!empty($this->sessionMetadata)) {
                 $this->sessionMetadata = [];
+                $this->sessionStatus = 'closed';
                 Log::addMessage('info', 'Session closed and session metadata cleared');
             } else {
                 Log::addMessage('info', 'No active session to close');
