@@ -5,8 +5,9 @@ require_once 'utils/Log.php';
 use utils\Log;
 class Transport_layer
 {
+    private $windowSize;
     public function __construct() {
-
+        $this->windowSize = 4096;
     }
     public function establishConnection($destination) { //Establish a connection with the destination node, if using a connection-oriented protocol like TCP.
 
@@ -82,6 +83,12 @@ class Transport_layer
             $sequenceNumber = $header['sequence_number'];
             $acknowledgmentNumber = $header['acknowledgment_number'];
 
+            // Check for an established connection
+            if (!$this->isConnectionEstablished($sourcePort, $destinationPort)) {
+                throw new \Exception('Connection not established');
+            }
+
+
             // Update the acknowledgment number
             $acknowledgmentNumber = $sequenceNumber + 1;
 
@@ -91,6 +98,7 @@ class Transport_layer
                 'destination_port' => $sourcePort,
                 'sequence_number' => $acknowledgmentNumber,
                 'acknowledgment_number' => 0,
+                'window_size' => $this->getWindowSize(),
             ];
             $this->sendData($ackPacket);
 
@@ -158,6 +166,22 @@ class Transport_layer
         $sum = ~$sum & 0xffff;
         return $sum;
     }
+
+    public function isConnectionEstablished(): bool
+    {
+        $sessionLayer = new Session_layer();
+        if ($sessionLayer->getSessionStatus()) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+    public function getWindowSize(): int
+    {
+        return $this->windowSize;
+    }
+
 
 
 }
