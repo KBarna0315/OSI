@@ -68,5 +68,12 @@ class Session_layer
     public function handleSessionErrors() { //Handle session-related errors and interruptions.
 
     }
+    /**
+     * Get the current session status
+     * @return string|null The session status, or null if not set
+     */
+    public function getSessionStatus() {
+        return $this->sessionStatus;
+    }
 
 }
