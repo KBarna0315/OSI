@@ -43,11 +43,11 @@ class OsiSimulationController {
      * Simulate the data transmission process through all the OSI model layers from top to bottom.
      * The function starts from the Application layer, proceeds through the:
      * Presentation, Session, Transport, Network, Data Link, and Physical layers, and finally returns the transmitted data.
-     * @param mixed $data The input data to be transmitted through the OSI layers string probably but let's make it mixed just to be sure
+     * @param string $data The input data to be transmitted through the OSI layers string probably but let's make it mixed just to be sure
      * @return array The transmitted data after it has been processed by all the OSI layers
      * @throws Exception
      */
-    public function simulateDataTransmission(mixed $data): array
+    public function simulateDataTransmission(string $data): array
     {
         // Process data through the OSI layers (top to bottom)
         Log::addMessage('info', 'Simulation started.');
@@ -68,11 +68,11 @@ class OsiSimulationController {
      * The function starts from the Physical layer, proceeds through the Data Link, Network,
      * Transport, Session, Presentation, and Application layers, and finally returns the
      * received data.
-     * @param mixed $data The input data to be received through the OSI layers
+     * @param $data The input data to be received through the OSI layers
      * @return array|string[] The received data after it has been processed by all the OSI layers
      * @throws Exception
      */
-    public function simulateDataReception(mixed $data): array
+    public function simulateDataReception($data): array
     {
         // Process received data through the OSI layers (bottom to top)
         $receivedFrames = $this->physicalLayer->receiveBits($data);
