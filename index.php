@@ -1,6 +1,6 @@
 <?php
 require_once 'controllers/osi_simulation_controller.php';
-require_once 'utils/log.php';
+require_once 'utils/Log.php';
 use utils\Log;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
