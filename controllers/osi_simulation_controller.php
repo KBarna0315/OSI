@@ -43,7 +43,7 @@ class OsiSimulationController {
      * Simulate the data transmission process through all the OSI model layers from top to bottom.
      * The function starts from the Application layer, proceeds through the:
      * Presentation, Session, Transport, Network, Data Link, and Physical layers, and finally returns the transmitted data.
-     * @param string $data The input data to be transmitted through the OSI layers string probably but let's make it mixed just to be sure
+     * @param string $data The input data to be transmitted through the OSI layers string probably
      * @return array The transmitted data after it has been processed by all the OSI layers
      * @throws Exception
      */
